@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SADDROP1220 // TERMINAL</title>
-    <link rel="stylesheet" href="style.css?v=1.3">
+    <title>SADDROP1220 // SECURE_SHELL</title>
+    <link rel="stylesheet" href="style.css?v=1.4">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
@@ -15,76 +15,87 @@
     </div>
 
     <div id="access-screen" class="terminal" style="display: none;">
-        <p class="directory">C:\USERS\SADDROP1220> run portfolio.exe</p>
-        <p class="warning">CAUTION: ACCESSING RESTRICTED DATA.</p>
-        <p>Are you sure? (y/n): <span id="user-input"></span><span class="blink">_</span></p>
+        <p class="directory">SADDROP1220@SYSTEM:~# run authorization_core</p>
+        <p class="warning">! ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY !</p>
+        <p>INITIALIZE INTERFACE? (y/n): <span id="user-input"></span><span class="blink">_</span></p>
         <div class="mobile-keys">
-            <button onclick="handleInput('y')">[ Y ]</button>
-            <button onclick="handleInput('n')">[ N ]</button>
+            <button onclick="handleInput('y')">PROCEED</button>
+            <button onclick="handleInput('n')">ABORT</button>
         </div>
     </div>
 
-    <div id="main-content" class="terminal" style="display: none;">
-        <header>
-            <h1>SYSTEM ACCESS GRANTED</h1>
-            <hr>
-        </header>
+    <div id="main-content" class="interface-grid" style="display: none;">
         
-        <section class="content">
+        <header class="system-header">
+            <div class="status-node">
+                <span class="label">CPU_LOAD:</span>
+                <div class="mini-bar"><div id="cpu-bar"></div></div>
+                <span id="cpu-val">24</span>%
+            </div>
+            <div class="status-node">
+                <span class="label">MEM_USAGE:</span>
+                <div class="mini-bar"><div id="ram-bar"></div></div>
+                <span id="ram-val">58</span>%
+            </div>
+            <div class="status-node pulse">
+                <span class="label">NET_STATUS:</span> ONLINE
+            </div>
+        </header>
+
+        <main class="terminal-main">
             <div class="block collapsible">
-                <h2 onclick="toggleBlock(this)">> КТО Я? <span class="state">[ - ]</span></h2>
+                <h2 onclick="toggleBlock(this)">[+] USER_BIO</h2>
                 <div class="inner-content">
-                    <p>Разработчик, исследователь кода, создатель цифровых миров.</p>
+                    <p class="text-dim">Fullstack-разработчик и исследователь кибер-сред. Создаю инструменты, которые работают на грани кода и искусства.</p>
                 </div>
             </div>
 
             <div class="block collapsible">
-                <h2 onclick="toggleBlock(this)">> МОИ_ДИРЕКТОРИИ <span class="state">[ - ]</span></h2>
+                <h2 onclick="toggleBlock(this)">[+] EVENT_HISTORY</h2>
+                <div class="inner-content history-log">
+                    <p><span>[2023.05]</span> Initialized first Python script.</p>
+                    <p><span>[2024.01]</span> Deployment of secure network modules.</p>
+                    <p><span>[2025.08]</span> Migration to advanced terminal interfaces.</p>
+                    <p><span>[TODAY]</span> Establishing connection with user...</p>
+                </div>
+            </div>
+
+            <div class="block collapsible">
+                <h2 onclick="toggleBlock(this)">[+] FILE_SYSTEM</h2>
                 <div class="inner-content">
                     <div class="file-list">
-                        <div class="file-row head"><span>PERM</span><span>SIZE</span><span>DATE</span><span>NAME</span></div>
-                        <div class="file-row"><span>drwxr-xr-x</span><span>4.2K</span><span>MAR 12</span><span class="f-name"><a href="#">CHUPA_BOT</a></span></div>
-                        <div class="file-row"><span>-rwxr--r--</span><span>128B</span><span>FEB 28</span><span class="f-name"><a href="#">SCANNER.py</a></span></div>
+                        <div class="file-row head"><span>RIGHTS</span><span>SIZE</span><span>NAME</span></div>
+                        <div class="file-row"><span>rwx-r--</span><span>4.2k</span><span class="f-name"><a href="#">CHUPA_BOT</a></span></div>
+                        <div class="file-row"><span>r--r--r</span><span>12kb</span><span class="f-name"><a href="#">CORE_ALPHA</a></span></div>
                     </div>
                 </div>
             </div>
-
-            <div class="block collapsible">
-                <h2 onclick="toggleBlock(this)">> SYSTEM_MONITOR <span class="state">[ - ]</span></h2>
-                <div class="inner-content">
-                    <div class="stats-grid">
-                        <div>CPU: <span id="cpu-val">00</span>% <div class="bar"><div id="cpu-bar" style="width: 0%"></div></div></div>
-                        <div>RAM: <span id="ram-val">00</span>% <div class="bar"><div id="ram-bar" style="width: 0%"></div></div></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </main>
     </div>
 
     <script>
-        // Логика загрузки и входа
-        const logs = ["[ OK ] Initializing...", "[ OK ] Connection: 192.168.1.1", "[ OK ] Layer Security Active.", "Login sequence..."];
+        // Код управления (Input, Logs, Stats)
+        const logs = ["[ OK ] Kernel Loaded", "[ OK ] Env Sync", "[ OK ] IP: 85.12.44.1", "Starting GUI..."];
         let logIndex = 0;
         function showLogs() {
             if (logIndex < logs.length) {
                 const p = document.createElement('p');
-                p.innerHTML = logs[logIndex].replace("[ OK ]", "<span style='color:#00ff41'>[ OK ]</span>");
+                p.innerHTML = logs[logIndex].replace("[ OK ]", "<span class='green-text'>[ OK ]</span>");
                 document.getElementById('boot-logs').appendChild(p);
                 logIndex++;
-                setTimeout(showLogs, 200);
+                setTimeout(showLogs, 150);
             } else {
                 setTimeout(() => { 
                     document.getElementById('boot-screen').style.display = 'none';
                     document.getElementById('access-screen').style.display = 'block';
-                }, 800);
+                }, 600);
             }
         }
         window.onload = showLogs;
 
-        // Обработка ввода (клавиатура + кнопки)
         function handleInput(key) {
             document.getElementById('user-input').innerText = key;
-            if (key === 'y') setTimeout(grantAccess, 500);
+            if (key === 'y') setTimeout(grantAccess, 400);
             if (key === 'n') {
                 document.body.classList.add('tv-off');
                 setTimeout(() => { window.location.href = "about:blank"; }, 800);
@@ -94,44 +105,38 @@
 
         function grantAccess() {
             document.getElementById('access-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('main-content').style.display = 'grid';
             document.body.classList.remove('off');
             startMatrix();
             updateStats();
         }
 
-        // Сворачивание блоков
         function toggleBlock(header) {
-            const block = header.parentElement;
-            const state = header.querySelector('.state');
-            block.classList.toggle('collapsed');
-            state.innerText = block.classList.contains('collapsed') ? "[ + ]" : "[ - ]";
+            header.parentElement.classList.toggle('collapsed');
         }
 
-        // Рандомные статы для приколюхи
         function updateStats() {
             setInterval(() => {
-                const cpu = Math.floor(Math.random() * 40 + 10);
-                const ram = Math.floor(Math.random() * 20 + 60);
+                const cpu = Math.floor(Math.random() * 30 + 10);
+                const ram = Math.floor(Math.random() * 10 + 40);
                 document.getElementById('cpu-val').innerText = cpu;
                 document.getElementById('cpu-bar').style.width = cpu + "%";
                 document.getElementById('ram-val').innerText = ram;
                 document.getElementById('ram-bar').style.width = ram + "%";
-            }, 2000);
+            }, 1500);
         }
 
-        // Код матрицы (сокращенно)
         function startMatrix() {
             const canvas = document.getElementById('matrix');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             const drops = Array(Math.floor(canvas.width/16)).fill(1);
             function draw() {
-                ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                ctx.fillStyle = "#0f0"; ctx.font = "16px monospace";
+                ctx.fillStyle = "rgba(10, 10, 15, 0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = "#00ff41"; ctx.font = "14px monospace";
                 drops.forEach((y, i) => {
                     ctx.fillText(String.fromCharCode(Math.random()*128), i*16, y*16);
-                    if (y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    if (y*16 > canvas.height && Math.random() > 0.98) drops[i] = 0;
                     drops[i]++;
                 });
             }
