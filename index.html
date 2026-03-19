@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SADDROP1220 // ROOT_ACCESS</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
@@ -30,6 +30,40 @@
                 <h2>> КТО Я?</h2>
                 <p>Разработчик, исследователь кода, создатель цифровых миров. Специализируюсь на поиске нестандартных решений.</p>
             </div>
+
+            <div class="block">
+                <h2>> МОИ_ДИРЕКТОРИИ (ls -la)</h2>
+                <div class="file-list">
+                    <div class="file-row head">
+                        <span>PERMISSIONS</span>
+                        <span>SIZE</span>
+                        <span>DATE</span>
+                        <span>NAME</span>
+                    </div>
+                    
+                    <div class="file-row">
+                        <span class="f-perm">drwxr-xr-x</span>
+                        <span class="f-size">4.2KB</span>
+                        <span class="f-date">MAR 12</span>
+                        <span class="f-name"><a href="#">CHUPA_BOT</a></span>
+                    </div>
+
+                    <div class="file-row">
+                        <span class="f-perm">-rwxr--r--</span>
+                        <span class="f-size">128B</span>
+                        <span class="f-date">FEB 28</span>
+                        <span class="f-name"><a href="#">NET_SCANNER.py</a></span>
+                    </div>
+
+                    <div class="file-row">
+                        <span class="f-perm">drwxr-xr-x</span>
+                        <span class="f-size">1.0MB</span>
+                        <span class="f-date">JAN 15</span>
+                        <span class="f-name"><a href="#">WEB_PORTAL</a></span>
+                    </div>
+                </div>
+            </div>
+
             <div class="block">
                 <h2>> СТЕК ТЕХНОЛОГИЙ</h2>
                 <p>[ Python ] [ JavaScript ] [ HTML/CSS ] [ Linux ]</p>
@@ -45,28 +79,31 @@
         const mainContent = document.getElementById('main-content');
         const userInputSpan = document.getElementById('user-input');
 
+        // Генерируем случайный IP для красоты
+        const fakeIp = `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+
         const logs = [
             "[  OK  ] Started Initializing system units.",
             "[  OK  ] Reached target Local File Systems.",
             "[  OK  ] Found device /dev/ttyS0.",
             "[  OK  ] Mounting Network Storage...",
-            "[  OK  ] Connection established: 192.168.1.122",
+            `[  OK  ] Connection established: ${fakeIp}`,
             "[ WAIT ] Loading encrypted modules...",
             "[  OK  ] Decryption complete.",
             "[  OK  ] Started Portfolio Security Layer.",
             "Starting login sequence..."
         ];
 
-        // 1. Эмуляция загрузки
         let logIndex = 0;
         function showLogs() {
             if (logIndex < logs.length) {
                 const p = document.createElement('p');
                 p.style.margin = "2px 0";
+                // Подсвечиваем [ OK ] зеленым прямо в JS
                 p.innerHTML = logs[logIndex].replace("[  OK  ]", "<span style='color:#00ff41'>[  OK  ]</span>");
                 bootLogs.appendChild(p);
                 logIndex++;
-                setTimeout(showLogs, Math.random() * 400 + 100);
+                setTimeout(showLogs, Math.random() * 300 + 50);
             } else {
                 setTimeout(() => {
                     bootScreen.style.display = 'none';
@@ -77,7 +114,6 @@
 
         window.onload = showLogs;
 
-        // 2. Обработка ввода y/n
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (accessScreen.style.display === 'block') {
@@ -103,7 +139,6 @@
             setTimeout(() => { window.location.href = "about:blank"; }, 800);
         }
 
-        // 3. Код Матрицы
         function startMatrix() {
             const canvas = document.getElementById('matrix');
             const ctx = canvas.getContext('2d');
