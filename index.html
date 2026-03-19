@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SADDROP1220 // SECURE_LINE</title>
+    <title>SADDROP1220 // ROOT_ACCESS</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="off"> <canvas id="matrix"></canvas>
+<body class="off">
+    <canvas id="matrix"></canvas>
     <div class="scanline"></div>
 
-    <div id="access-screen" class="terminal">
+    <div id="boot-screen" class="terminal">
+        <div id="boot-logs"></div>
+    </div>
+
+    <div id="access-screen" class="terminal" style="display: none;">
         <p class="directory">C:\USERS\SADDROP1220> run portfolio.exe</p>
         <p class="warning">CAUTION: ACCESSING RESTRICTED DATA.</p>
         <p>Are you sure? (y/n): <span id="user-input"></span><span class="blink">_</span></p>
@@ -23,32 +28,66 @@
         <section class="content">
             <div class="block">
                 <h2>> КТО Я?</h2>
-                <p>Разработчик, исследователь кода, создатель цифровых миров.</p>
+                <p>Разработчик, исследователь кода, создатель цифровых миров. Специализируюсь на поиске нестандартных решений.</p>
             </div>
             <div class="block">
-                <h2>> СТЕК</h2>
-                <p>[ Python ] [ JavaScript ] [ HTML/CSS ]</p>
+                <h2>> СТЕК ТЕХНОЛОГИЙ</h2>
+                <p>[ Python ] [ JavaScript ] [ HTML/CSS ] [ Linux ]</p>
             </div>
             <p class="blink">_ Система активна...</p>
         </section>
     </div>
 
     <script>
+        const bootLogs = document.getElementById('boot-logs');
+        const bootScreen = document.getElementById('boot-screen');
         const accessScreen = document.getElementById('access-screen');
         const mainContent = document.getElementById('main-content');
         const userInputSpan = document.getElementById('user-input');
-        let inputBuffer = "";
 
-        // Логика ввода с клавиатуры
+        const logs = [
+            "[  OK  ] Started Initializing system units.",
+            "[  OK  ] Reached target Local File Systems.",
+            "[  OK  ] Found device /dev/ttyS0.",
+            "[  OK  ] Mounting Network Storage...",
+            "[  OK  ] Connection established: 192.168.1.122",
+            "[ WAIT ] Loading encrypted modules...",
+            "[  OK  ] Decryption complete.",
+            "[  OK  ] Started Portfolio Security Layer.",
+            "Starting login sequence..."
+        ];
+
+        // 1. Эмуляция загрузки
+        let logIndex = 0;
+        function showLogs() {
+            if (logIndex < logs.length) {
+                const p = document.createElement('p');
+                p.style.margin = "2px 0";
+                p.innerHTML = logs[logIndex].replace("[  OK  ]", "<span style='color:#00ff41'>[  OK  ]</span>");
+                bootLogs.appendChild(p);
+                logIndex++;
+                setTimeout(showLogs, Math.random() * 400 + 100);
+            } else {
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    accessScreen.style.display = 'block';
+                }, 1000);
+            }
+        }
+
+        window.onload = showLogs;
+
+        // 2. Обработка ввода y/n
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
-
-            if (key === 'y') {
-                userInputSpan.innerText = 'y';
-                setTimeout(grantAccess, 500);
-            } else if (key === 'n') {
-                userInputSpan.innerText = 'n';
-                setTimeout(denyAccess, 500);
+            if (accessScreen.style.display === 'block') {
+                if (key === 'y') {
+                    userInputSpan.innerText = 'y';
+                    setTimeout(grantAccess, 500);
+                } else if (key === 'n') {
+                    userInputSpan.innerText = 'n';
+                    setTimeout(denyAccess, 500);
+                }
             }
         });
 
@@ -56,29 +95,24 @@
             accessScreen.style.display = 'none';
             mainContent.style.display = 'block';
             document.body.classList.remove('off');
-            // Запуск матрицы только после входа
             startMatrix();
         }
 
         function denyAccess() {
-            // Эффект выключения ТВ (схлопывание)
             document.body.classList.add('tv-off');
-            setTimeout(() => {
-                window.location.href = "about:blank"; // Уходим на пустую страницу
-            }, 1000);
+            setTimeout(() => { window.location.href = "about:blank"; }, 800);
         }
 
-        // Код матрицы (вынесен в функцию)
+        // 3. Код Матрицы
         function startMatrix() {
             const canvas = document.getElementById('matrix');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+            const letters = "日ハミヒーヘホマミムメモヤユヨ0123456789ABCDEF";
             const fontSize = 16;
             const columns = canvas.width / fontSize;
             const drops = Array(Math.floor(columns)).fill(1);
-
             function draw() {
                 ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);

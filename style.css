@@ -63,6 +63,18 @@ body {
     backdrop-filter: blur(5px);
 }
 
+/* Стили для логов загрузки Linux */
+#boot-logs {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #ffffff; /* Логи обычно белые */
+    text-align: left;
+}
+
+#boot-logs p {
+    margin: 2px 0;
+}
+
 /* Текст предупреждения */
 .warning {
     color: var(--warning-red);
@@ -134,7 +146,7 @@ hr {
 @keyframes tv-shutdown {
     0% {
         transform: scaleX(1) scaleY(1);
-        filter: brightness(1) white;
+        filter: brightness(1);
     }
     40% {
         transform: scaleX(1) scaleY(0.005);
