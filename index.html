@@ -3,89 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SADDROP1220 // TERMINAL</title>
+    <title>SADDROP1220 // SECURE_LINE</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <canvas id="matrix"></canvas>
-
+<body class="off"> <canvas id="matrix"></canvas>
     <div class="scanline"></div>
-    
-    <div class="terminal">
+
+    <div id="access-screen" class="terminal">
+        <p class="directory">C:\USERS\SADDROP1220> run portfolio.exe</p>
+        <p class="warning">CAUTION: ACCESSING RESTRICTED DATA.</p>
+        <p>Are you sure? (y/n): <span id="user-input"></span><span class="blink">_</span></p>
+    </div>
+
+    <div id="main-content" class="terminal" style="display: none;">
         <header>
-            <p class="directory">C:\USERS\SADDROP1220> <span class="typewriter">run portfolio.exe</span></p>
             <h1>SYSTEM ACCESS GRANTED</h1>
             <hr>
         </header>
-
         <section class="content">
             <div class="block">
                 <h2>> КТО Я?</h2>
-                <p>Разработчик, исследователь кода, создатель цифровых миров. Специализируюсь на поиске нестандартных решений и оптимизации систем.</p>
+                <p>Разработчик, исследователь кода, создатель цифровых миров.</p>
             </div>
-
             <div class="block">
-                <h2>> ПРОЕКТЫ</h2>
-                <div class="project">
-                    <span class="p-name">[ CHUPA_PROJECT ]</span> --- <a href="#">VIEW_SOURCE</a>
-                    <p class="p-desc">// Описание твоего главного проекта здесь...</p>
-                </div>
-                <div class="project">
-                    <span class="p-name">[ NETWORK_SCANNER ]</span> --- <a href="#">VIEW_SOURCE</a>
-                    <p class="p-desc">// Скрипт для анализа сетевых узлов.</p>
-                </div>
+                <h2>> СТЕК</h2>
+                <p>[ Python ] [ JavaScript ] [ HTML/CSS ]</p>
             </div>
-
-            <div class="block">
-                <h2>> СТЕК ТЕХНОЛОГИЙ</h2>
-                <p>[ Python ] [ JavaScript ] [ HTML/CSS ] [ Linux ] [ SQL ]</p>
-            </div>
+            <p class="blink">_ Система активна...</p>
         </section>
-
-        <footer>
-            <p class="blink">_ Жду команду...</p>
-        </footer>
     </div>
 
     <script>
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
+        const accessScreen = document.getElementById('access-screen');
+        const mainContent = document.getElementById('main-content');
+        const userInputSpan = document.getElementById('user-input');
+        let inputBuffer = "";
 
-        // Растягиваем на весь экран
-        function resize() {
+        // Логика ввода с клавиатуры
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+
+            if (key === 'y') {
+                userInputSpan.innerText = 'y';
+                setTimeout(grantAccess, 500);
+            } else if (key === 'n') {
+                userInputSpan.innerText = 'n';
+                setTimeout(denyAccess, 500);
+            }
+        });
+
+        function grantAccess() {
+            accessScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+            document.body.classList.remove('off');
+            // Запуск матрицы только после входа
+            startMatrix();
+        }
+
+        function denyAccess() {
+            // Эффект выключения ТВ (схлопывание)
+            document.body.classList.add('tv-off');
+            setTimeout(() => {
+                window.location.href = "about:blank"; // Уходим на пустую страницу
+            }, 1000);
+        }
+
+        // Код матрицы (вынесен в функцию)
+        function startMatrix() {
+            const canvas = document.getElementById('matrix');
+            const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-        }
-        resize();
-        window.addEventListener('resize', resize);
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
 
-        // Символы (катакана + латиница + цифры)
-        const letters = "日ハミヒーヘホマミムメモヤユヨラリルレロワン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$%^&*";
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function draw() {
-            // Эффект затухания: заливаем черным с прозрачностью
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = "#00ff41"; // Тот самый зеленый
-            ctx.font = fontSize + "px monospace";
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                // Если капля достигла низа, с шансом возвращаем её наверх
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#0f0";
+                ctx.font = fontSize + "px monospace";
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
                 }
-                drops[i]++;
             }
+            setInterval(draw, 33);
         }
-
-        setInterval(draw, 33);
     </script>
 </body>
 </html>
