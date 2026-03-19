@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SADDROP1220 // ROOT_ACCESS</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
@@ -28,10 +28,10 @@
         <section class="content">
             <div class="block">
                 <h2>> КТО Я?</h2>
-                <p>Разработчик, исследователь кода, создатель цифровых миров. Специализируюсь на поиске нестандартных решений.</p>
+                <p>Разработчик, исследователь кода, создатель цифровых миров.</p>
             </div>
             <div class="block">
-                <h2>> СТЕК ТЕХНОЛОГИЙ</h2>
+                <h2>> СТЕК</h2>
                 <p>[ Python ] [ JavaScript ] [ HTML/CSS ] [ Linux ]</p>
             </div>
             <p class="blink">_ Система активна...</p>
@@ -57,7 +57,6 @@
             "Starting login sequence..."
         ];
 
-        // 1. Эмуляция загрузки
         let logIndex = 0;
         function showLogs() {
             if (logIndex < logs.length) {
@@ -66,44 +65,34 @@
                 p.innerHTML = logs[logIndex].replace("[  OK  ]", "<span style='color:#00ff41'>[  OK  ]</span>");
                 bootLogs.appendChild(p);
                 logIndex++;
-                setTimeout(showLogs, Math.random() * 400 + 100);
+                setTimeout(showLogs, Math.random() * 300 + 50);
             } else {
                 setTimeout(() => {
                     bootScreen.style.display = 'none';
                     accessScreen.style.display = 'block';
-                }, 1000);
+                }, 800);
             }
         }
-
         window.onload = showLogs;
 
-        // 2. Обработка ввода y/n
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (accessScreen.style.display === 'block') {
                 if (key === 'y') {
                     userInputSpan.innerText = 'y';
-                    setTimeout(grantAccess, 500);
+                    setTimeout(() => {
+                        accessScreen.style.display = 'none';
+                        mainContent.style.display = 'block';
+                        startMatrix();
+                    }, 500);
                 } else if (key === 'n') {
                     userInputSpan.innerText = 'n';
-                    setTimeout(denyAccess, 500);
+                    document.body.classList.add('tv-off');
+                    setTimeout(() => { window.location.href = "about:blank"; }, 800);
                 }
             }
         });
 
-        function grantAccess() {
-            accessScreen.style.display = 'none';
-            mainContent.style.display = 'block';
-            document.body.classList.remove('off');
-            startMatrix();
-        }
-
-        function denyAccess() {
-            document.body.classList.add('tv-off');
-            setTimeout(() => { window.location.href = "about:blank"; }, 800);
-        }
-
-        // 3. Код Матрицы
         function startMatrix() {
             const canvas = document.getElementById('matrix');
             const ctx = canvas.getContext('2d');
