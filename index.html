@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SADDROP1220 // SECURE_SHELL</title>
-    <link rel="stylesheet" href="style.css?v=1.4">
+    <link rel="stylesheet" href="style.css?v=1.5">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
     <div class="scanline"></div>
 
-    <div id="boot-screen" class="terminal">
+    <div id="boot-screen" class="terminal boot-frame">
         <div id="boot-logs"></div>
     </div>
 
@@ -43,15 +43,15 @@
         </header>
 
         <main class="terminal-main">
-            <div class="block collapsible">
-                <h2 onclick="toggleBlock(this)">[+] USER_BIO</h2>
+            <div class="block collapsible collapsed">
+                <h2 onclick="toggleBlock(this)"><span>// USER_BIO</span> <span class="state">[ + ]</span></h2>
                 <div class="inner-content">
                     <p class="text-dim">Fullstack-разработчик и исследователь кибер-сред. Создаю инструменты, которые работают на грани кода и искусства.</p>
                 </div>
             </div>
 
-            <div class="block collapsible">
-                <h2 onclick="toggleBlock(this)">[+] EVENT_HISTORY</h2>
+            <div class="block collapsible collapsed">
+                <h2 onclick="toggleBlock(this)"><span>// EVENT_HISTORY</span> <span class="state">[ + ]</span></h2>
                 <div class="inner-content history-log">
                     <p><span>[2023.05]</span> Initialized first Python script.</p>
                     <p><span>[2024.01]</span> Deployment of secure network modules.</p>
@@ -60,8 +60,8 @@
                 </div>
             </div>
 
-            <div class="block collapsible">
-                <h2 onclick="toggleBlock(this)">[+] FILE_SYSTEM</h2>
+            <div class="block collapsible collapsed">
+                <h2 onclick="toggleBlock(this)"><span>// FILE_SYSTEM</span> <span class="state">[ + ]</span></h2>
                 <div class="inner-content">
                     <div class="file-list">
                         <div class="file-row head"><span>RIGHTS</span><span>SIZE</span><span>NAME</span></div>
@@ -74,8 +74,14 @@
     </div>
 
     <script>
-        // Код управления (Input, Logs, Stats)
-        const logs = ["[ OK ] Kernel Loaded", "[ OK ] Env Sync", "[ OK ] IP: 85.12.44.1", "Starting GUI..."];
+        const logs = [
+            "[ OK ] Kernel Loaded", 
+            "[ OK ] Env Sync Complete", 
+            "[ OK ] IP: 85.12.44.1 established", 
+            "[ OK ] Security protocols active",
+            "Starting GUI Interface..."
+        ];
+        
         let logIndex = 0;
         function showLogs() {
             if (logIndex < logs.length) {
@@ -111,8 +117,18 @@
             updateStats();
         }
 
+        // Обновленная функция сворачивания
         function toggleBlock(header) {
-            header.parentElement.classList.toggle('collapsed');
+            const block = header.parentElement;
+            const state = header.querySelector('.state');
+            block.classList.toggle('collapsed');
+            
+            // Динамическая смена иконки
+            if (block.classList.contains('collapsed')) {
+                state.innerText = '[ + ]';
+            } else {
+                state.innerText = '[ - ]';
+            }
         }
 
         function updateStats() {
@@ -132,8 +148,10 @@
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             const drops = Array(Math.floor(canvas.width/16)).fill(1);
             function draw() {
-                ctx.fillStyle = "rgba(10, 10, 15, 0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                ctx.fillStyle = "#00ff41"; ctx.font = "14px monospace";
+                ctx.fillStyle = "rgba(2, 2, 5, 0.15)"; 
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = "#00ff41"; 
+                ctx.font = "14px monospace";
                 drops.forEach((y, i) => {
                     ctx.fillText(String.fromCharCode(Math.random()*128), i*16, y*16);
                     if (y*16 > canvas.height && Math.random() > 0.98) drops[i] = 0;

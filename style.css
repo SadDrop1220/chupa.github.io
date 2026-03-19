@@ -1,17 +1,18 @@
 /* Передовая цветовая палитра */
 :root {
     --neon: #00ff41;
-    --bg-dark: #050508;
-    --panel-bg: rgba(10, 15, 25, 0.85);
+    --neon-glow: rgba(0, 255, 65, 0.4);
+    --bg-dark: #020205;
+    --panel-bg: rgba(5, 10, 20, 0.85);
     --accent-blue: #0066ff;
+    --blue-glow: rgba(0, 102, 255, 0.4);
     --text-dim: #a0a0a0;
-    --dim-green: rgba(0, 255, 65, 0.15);
 }
 
 body {
     background-color: var(--bg-dark);
     color: var(--neon);
-    font-family: 'Segoe UI', 'Courier New', monospace;
+    font-family: 'Consolas', 'Segoe UI', monospace;
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -20,135 +21,163 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    /* Фоновая цифровая сетка */
+    background-image: 
+        linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
 }
 
-/* Матрица на фоне стала чуть синее для глубины */
+/* Эффект свечения для всего текста */
+* {
+    text-shadow: 0 0 5px var(--neon-glow);
+}
+
 #matrix {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: -1;
-    opacity: 0.25;
+    opacity: 0.15;
     filter: hue-rotate(15deg);
 }
 
 .scanline {
     width: 100%; height: 2px;
-    background: rgba(0, 102, 255, 0.1);
+    background: rgba(0, 255, 65, 0.1);
     position: fixed; top: 0; z-index: 10;
     pointer-events: none;
-    animation: scan 6s linear infinite;
+    animation: scan 8s linear infinite;
 }
 
 @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
-/* СЕТКА ИНТЕРФЕЙСА (High-Tech Layout) */
+/* ДИЗАЙН ТЕРМИНАЛА ЗАГРУЗКИ (Boot Frame) */
+.boot-frame {
+    border: 2px solid var(--neon);
+    background: rgba(0, 5, 0, 0.95) !important;
+    box-shadow: 0 0 30px var(--neon-glow), inset 0 0 20px var(--neon-glow) !important;
+    padding: 40px !important;
+    border-radius: 8px;
+    position: relative;
+}
+
+.boot-frame::before {
+    content: "SYSTEM_BOOT_SEQUENCE";
+    position: absolute;
+    top: -10px; left: 20px;
+    background: var(--bg-dark);
+    padding: 0 10px;
+    font-size: 0.7rem;
+    color: var(--neon);
+}
+
+/* СЕТКА ИНТЕРФЕЙСА */
 .interface-grid {
     display: grid;
     grid-template-rows: auto 1fr;
     width: 95vw;
     max-width: 1000px;
     height: 90vh;
-    gap: 15px;
+    gap: 20px;
     z-index: 5;
+    animation: flicker 0.15s infinite;
 }
 
-/* SYSTEM MONITOR (Всегда сверху и развернут) */
+/* SYSTEM MONITOR */
 .system-header {
     background: var(--panel-bg);
     border: 1px solid var(--accent-blue);
-    padding: 12px 20px;
+    padding: 15px 25px;
     display: flex;
     justify-content: space-around;
     backdrop-filter: blur(12px);
-    box-shadow: 0 0 20px rgba(0, 102, 255, 0.15);
+    box-shadow: 0 0 20px var(--blue-glow);
     border-radius: 4px;
 }
 
 .status-node {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
     gap: 12px;
     color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 .mini-bar {
-    width: 80px; height: 6px;
-    background: #111;
-    border: 1px solid #333;
+    width: 100px; height: 8px;
+    background: #000;
+    border: 1px solid #222;
+    border-radius: 10px;
     overflow: hidden;
 }
 
 .mini-bar div {
     height: 100%;
     background: var(--neon);
-    box-shadow: 0 0 8px var(--neon);
-    transition: width 0.4s ease;
+    box-shadow: 0 0 10px var(--neon);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ТЕРМИНАЛ И ОСНОВНОЙ КОНТЕНТ */
 .terminal-main {
     background: var(--panel-bg);
-    border: 1px solid var(--dim-green);
-    border-top: 2px solid var(--neon);
-    padding: 25px;
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    border-top: 3px solid var(--neon);
+    padding: 30px;
     overflow-y: auto;
     backdrop-filter: blur(10px);
-    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 8px 8px;
 }
 
-/* МОЯ ИСТОРИЯ (Event Log style) */
-.history-log {
+/* СТИЛЬ БЛОКОВ (Collapsible) */
+.block {
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 255, 65, 0.1);
+    background: rgba(0, 255, 65, 0.02);
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.block h2 {
+    margin: 0;
+    padding: 12px 15px;
+    background: rgba(0, 255, 65, 0.05);
+    color: #fff;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.block h2:hover {
+    background: rgba(0, 255, 65, 0.1);
+    color: var(--neon);
+}
+
+.inner-content {
+    padding: 20px;
+    border-top: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+.collapsed .inner-content {
+    display: none;
+}
+
+/* МОЯ ИСТОРИЯ */
+.history-log p {
     border-left: 2px solid var(--accent-blue);
     padding-left: 15px;
-    margin-top: 10px;
-}
-
-.history-log p {
-    font-size: 0.85rem;
-    margin: 8px 0;
+    margin: 12px 0;
     color: var(--text-dim);
 }
 
 .history-log span {
     color: var(--accent-blue);
     font-weight: bold;
-    margin-right: 8px;
-}
-
-/* СВОРАЧИВАНИЕ (Collapsible) */
-.collapsible h2 {
-    background: transparent;
-    color: var(--neon);
-    cursor: pointer;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.1);
-    font-size: 1rem;
-    letter-spacing: 1px;
-}
-
-.collapsible h2:hover { text-shadow: 0 0 10px var(--neon); }
-
-.collapsed .inner-content { display: none; }
-
-/* КНОПКИ ДЛЯ ТЕЛЕФОНА (PRO Design) */
-.mobile-keys button {
-    background: rgba(0, 102, 255, 0.05);
-    border: 1px solid var(--accent-blue);
-    color: var(--accent-blue);
-    padding: 12px 25px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.mobile-keys button:active, .mobile-keys button:hover {
-    background: var(--accent-blue);
-    color: #fff;
-    box-shadow: 0 0 15px var(--accent-blue);
+    text-shadow: 0 0 8px var(--blue-glow);
 }
 
 /* СПИСОК ФАЙЛОВ */
@@ -156,67 +185,63 @@ body {
     display: grid;
     grid-template-columns: 100px 70px 1fr;
     gap: 15px;
-    padding: 6px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding: 10px 8px;
 }
 
-.file-row:hover { background: rgba(0, 255, 65, 0.05); }
-
 .file-row.head {
-    color: #fff;
+    color: var(--accent-blue);
     border-bottom: 1px solid var(--accent-blue);
-    text-transform: uppercase;
-    font-size: 0.7rem;
+    text-shadow: 0 0 5px var(--blue-glow);
 }
 
 .f-name a { color: #fff; text-decoration: none; border-bottom: 1px dashed #444; }
 .f-name a:hover { color: var(--neon); border-bottom: 1px solid var(--neon); }
 
-/* ЭФФЕКТ ТВ */
-.tv-off { animation: tv-shutdown 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+/* КНОПКИ */
+.mobile-keys button {
+    background: transparent;
+    border: 1px solid var(--neon);
+    color: var(--neon);
+    padding: 12px 30px;
+    font-family: 'Consolas', monospace;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--neon-glow);
+    transition: 0.3s;
+}
+
+.mobile-keys button:hover {
+    background: var(--neon);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon);
+}
+
+/* СКРОЛЛБАР */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { 
+    background: var(--neon); 
+    box-shadow: 0 0 10px var(--neon);
+}
+
+/* АНИМАЦИИ */
+@keyframes flicker {
+    0% { opacity: 0.99; }
+    5% { opacity: 0.95; }
+    10% { opacity: 0.99; }
+    100% { opacity: 1; }
+}
+
 @keyframes tv-shutdown {
     50% { transform: scaleX(1.3) scaleY(0.01); filter: brightness(4); }
     100% { transform: scale(0); opacity: 0; }
 }
 
+.tv-off { animation: tv-shutdown 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+
 /* АДАПТИВНОСТЬ */
 @media (max-width: 600px) {
-    .system-header { flex-direction: column; gap: 8px; align-items: flex-start; }
-    .interface-grid { width: 98vw; height: 98vh; gap: 5px; }
-    .terminal-main { padding: 15px; }
-    .file-row { grid-template-columns: 1fr 1fr; }
-    .file-row span:first-child { display: none; }
-}
-
-/* Скроллбар в стиле киберпанк */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #050508; }
-::-webkit-scrollbar-thumb { background: var(--accent-blue); }
-
-/* Эффект помех (Glitch) */
-@keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
-}
-
-.terminal-main:hover {
-    animation: glitch 0.3s linear infinite;
-    animation-play-state: paused; /* Начни анимацию только при наведении или по событию */
-}
-
-/* Сделаем, чтобы экран иногда "моргал" */
-@keyframes flicker {
-    0% { opacity: 0.97; }
-    5% { opacity: 0.95; }
-    10% { opacity: 0.9; }
-    15% { opacity: 0.95; }
-    100% { opacity: 1; }
-}
-
-.interface-grid {
-    animation: flicker 0.1s infinite;
+    .system-header { flex-direction: column; gap: 10px; }
+    .mini-bar { width: 80px; }
+    .interface-grid { width: 98vw; height: 95vh; }
+    .file-row { grid-template-columns: 1fr 1fr; font-size: 0.8rem; }
 }
