@@ -192,3 +192,31 @@ body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #050508; }
 ::-webkit-scrollbar-thumb { background: var(--accent-blue); }
+
+/* Эффект помех (Glitch) */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+.terminal-main:hover {
+    animation: glitch 0.3s linear infinite;
+    animation-play-state: paused; /* Начни анимацию только при наведении или по событию */
+}
+
+/* Сделаем, чтобы экран иногда "моргал" */
+@keyframes flicker {
+    0% { opacity: 0.97; }
+    5% { opacity: 0.95; }
+    10% { opacity: 0.9; }
+    15% { opacity: 0.95; }
+    100% { opacity: 1; }
+}
+
+.interface-grid {
+    animation: flicker 0.1s infinite;
+}
