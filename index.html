@@ -42,10 +42,23 @@
         </header>
 
         <main class="terminal-main">
-            <div class="block collapsible collapsed">
-                <h2 onclick="toggleBlock(this)"><span>// USER_BIO</span> <span class="state">[ + ]</span></h2>
+            <div class="block collapsible">
+                <h2 onclick="toggleBlock(this)"><span>// USER_BIO</span> <span class="state">[ - ]</span></h2>
                 <div class="inner-content">
-                    <p class="text-dim">Fullstack-разработчик и исследователь кибер-сред. Создаю инструменты, которые работают на грани кода и искусства.</p>
+                    <p style="color: var(--neon); font-weight: bold; margin-bottom: 10px;">
+                        > Fullstack Developer & Security Researcher
+                    </p>
+                    <p class="text-dim" style="margin-bottom: 10px; line-height: 1.6;">
+                        Строю защищенные цифровые экосистемы, используя опыт в системном программировании и наступательной безопасности. 
+                        Мой стек — это баланс между мощностью <span style="color: #fff;">C#/Java</span>, гибкостью <span style="color: #fff;">Python/Node.js</span> и глубоким контролем среды в <span style="color: #fff;">Linux</span>.
+                    </p>
+                    <p class="text-dim" style="margin-bottom: 15px; line-height: 1.6;">
+                        Я не просто создаю приложения — я проектирую их с учетом векторов атак. Владею навыками <span style="color: var(--accent-blue);">Ethical Hacking</span>, 
+                        что позволяет мне находить уязвимости раньше, чем это сделают другие. Работаю с данными на уровне <span style="color: #fff;">PostgreSQL</span> и создаю эстетичные интерфейсы на <span style="color: #fff;">CSS/JS</span>.
+                    </p>
+                    <p style="font-style: italic; color: var(--accent-blue); opacity: 0.8; border-top: 1px solid rgba(0, 255, 65, 0.1); padding-top: 10px;">
+                        «Код должен быть либо элегантным, либо зашифрованным. Я предпочитаю и то, и другое».
+                    </p>
                 </div>
             </div>
 
@@ -53,10 +66,10 @@
                 <h2 onclick="toggleBlock(this)"><span>// EVENT_HISTORY</span> <span class="state">[ + ]</span></h2>
                 <div class="inner-content history-log">
                     <p><span>[2017]</span> Начал свой путь программиста с Python.</p>
-                    <p><span>[2018]</span> Освоил Python и множественное кол-во библиотек.</p>
-                    <p><span>[2020]</span> Открыл свой первый бизнес, в виде игрового сервера в Minecraft.</p>
-                    <p><span>[2021]</span> Освоил backend, frontend. так-же стек: Node.js, React и PostgreSQL.</p>
-					<p><span>[2022]</span> Открыл игровой сервер в Rust. Пик 130 онлайна.</p>
+                    <p><span>[2018]</span> Освоил Python и множество библиотек.</p>
+                    <p><span>[2020]</span> Открыл свой первый бизнес: игровой сервер Minecraft.</p>
+                    <p><span>[2021]</span> Fullstack development. Стек: Node.js, React и PostgreSQL.</p>
+                    <p><span>[2022]</span> Запуск сервера Rust. Пик онлайна: 130 игроков.</p>
                 </div>
             </div>
 
@@ -86,13 +99,11 @@
         function showLogs() {
             if (logIndex < logs.length) {
                 const p = document.createElement('p');
-                // Заменяем [ OK ] на версию со стилем из CSS
                 p.innerHTML = logs[logIndex].replace("[ OK ]", "<span style='color:var(--neon);'>[ OK ]</span>");
                 document.getElementById('boot-logs').appendChild(p);
                 logIndex++;
                 setTimeout(showLogs, 150);
             } else {
-                // Показываем авторизацию ВНУТРИ того же окна
                 setTimeout(() => { 
                     document.getElementById('access-request').style.display = 'block';
                 }, 500);
@@ -109,14 +120,12 @@
             }
         }
 
-        // Слушатель клавиатуры
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (key === 'y' || key === 'n') handleInput(key);
         });
 
         function grantAccess() {
-            // Скрываем весь терминал авторизации
             document.getElementById('auth-terminal').style.display = 'none';
             document.getElementById('main-content').style.display = 'grid';
             document.body.classList.remove('off');
@@ -148,7 +157,6 @@
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             const drops = Array(Math.floor(canvas.width/16)).fill(1);
             function draw() {
-                // Черный фон с прозрачностью для хвостов
                 ctx.fillStyle = "rgba(2, 2, 5, 0.15)"; 
                 ctx.fillRect(0,0,canvas.width,canvas.height);
                 ctx.fillStyle = "#00ff41"; 
