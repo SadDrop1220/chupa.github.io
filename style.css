@@ -7,6 +7,7 @@
     --accent-blue: #0066ff;
     --blue-glow: rgba(0, 102, 255, 0.4);
     --text-dim: #a0a0a0;
+    --warning-red: #ff3e3e;
 }
 
 body {
@@ -38,8 +39,8 @@ body {
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: -1;
-    opacity: 0.15;
-    filter: hue-rotate(15deg);
+    opacity: 0.35; /* Сделал ярче как ты просил */
+    filter: hue-rotate(15deg) brightness(1.2);
 }
 
 .scanline {
@@ -57,20 +58,34 @@ body {
     border: 2px solid var(--neon);
     background: rgba(0, 5, 0, 0.95) !important;
     box-shadow: 0 0 30px var(--neon-glow), inset 0 0 20px var(--neon-glow) !important;
-    padding: 40px !important;
+    padding: 30px !important;
     border-radius: 8px;
     position: relative;
+    max-width: 600px;
+    width: 90%;
 }
 
 .boot-frame::before {
-    content: "SYSTEM_BOOT_SEQUENCE";
+    content: "TERMINAL_SESSION_v4.2";
     position: absolute;
     top: -10px; left: 20px;
     background: var(--bg-dark);
     padding: 0 10px;
     font-size: 0.7rem;
     color: var(--neon);
+    letter-spacing: 2px;
 }
+
+/* Стилизация текста внутри терминала авторизации */
+.directory { color: #fff; margin-bottom: 5px; }
+.warning { 
+    color: var(--warning-red); 
+    font-weight: bold; 
+    text-shadow: 0 0 10px rgba(255, 62, 62, 0.5);
+    margin: 10px 0;
+}
+.blink { animation: blink 1s step-end infinite; border-left: 8px solid var(--neon); margin-left: 5px; }
+@keyframes blink { 50% { opacity: 0; } }
 
 /* СЕТКА ИНТЕРФЕЙСА */
 .interface-grid {
@@ -145,7 +160,7 @@ body {
     padding: 12px 15px;
     background: rgba(0, 255, 65, 0.05);
     color: #fff;
-    font-size: 1rem;
+    font-size: 0.95rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -153,7 +168,7 @@ body {
 }
 
 .block h2:hover {
-    background: rgba(0, 255, 65, 0.1);
+    background: rgba(0, 255, 65, 0.15);
     color: var(--neon);
 }
 
@@ -180,33 +195,23 @@ body {
     text-shadow: 0 0 8px var(--blue-glow);
 }
 
-/* СПИСОК ФАЙЛОВ */
-.file-row {
-    display: grid;
-    grid-template-columns: 100px 70px 1fr;
+/* КНОПКИ (внутри терминала) */
+.mobile-keys {
+    margin-top: 20px;
+    display: flex;
     gap: 15px;
-    padding: 10px 8px;
 }
 
-.file-row.head {
-    color: var(--accent-blue);
-    border-bottom: 1px solid var(--accent-blue);
-    text-shadow: 0 0 5px var(--blue-glow);
-}
-
-.f-name a { color: #fff; text-decoration: none; border-bottom: 1px dashed #444; }
-.f-name a:hover { color: var(--neon); border-bottom: 1px solid var(--neon); }
-
-/* КНОПКИ */
 .mobile-keys button {
     background: transparent;
     border: 1px solid var(--neon);
     color: var(--neon);
-    padding: 12px 30px;
+    padding: 10px 25px;
     font-family: 'Consolas', monospace;
+    font-size: 0.8rem;
     cursor: pointer;
     box-shadow: 0 0 10px var(--neon-glow);
-    transition: 0.3s;
+    transition: all 0.2s ease;
 }
 
 .mobile-keys button:hover {
@@ -215,33 +220,22 @@ body {
     box-shadow: 0 0 20px var(--neon);
 }
 
-/* СКРОЛЛБАР */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { 
-    background: var(--neon); 
-    box-shadow: 0 0 10px var(--neon);
-}
-
-/* АНИМАЦИИ */
-@keyframes flicker {
-    0% { opacity: 0.99; }
-    5% { opacity: 0.95; }
-    10% { opacity: 0.99; }
-    100% { opacity: 1; }
-}
-
+/* АНИМАЦИИ ВЫХОДА */
+.tv-off { animation: tv-shutdown 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
 @keyframes tv-shutdown {
     50% { transform: scaleX(1.3) scaleY(0.01); filter: brightness(4); }
     100% { transform: scale(0); opacity: 0; }
 }
 
-.tv-off { animation: tv-shutdown 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-
 /* АДАПТИВНОСТЬ */
 @media (max-width: 600px) {
-    .system-header { flex-direction: column; gap: 10px; }
+    .system-header { flex-direction: column; gap: 10px; padding: 10px; }
     .mini-bar { width: 80px; }
-    .interface-grid { width: 98vw; height: 95vh; }
-    .file-row { grid-template-columns: 1fr 1fr; font-size: 0.8rem; }
+    .interface-grid { width: 98vw; height: 95vh; gap: 10px; }
+    .terminal-main { padding: 15px; }
+    .boot-frame { padding: 20px !important; }
 }
+
+/* Скроллбар */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--neon); box-shadow: 0 0 10px var(--neon); }

@@ -4,28 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SADDROP1220 // SECURE_SHELL</title>
-    <link rel="stylesheet" href="style.css?v=1.5">
+    <link rel="stylesheet" href="style.css?v=1.6">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
     <div class="scanline"></div>
 
-    <div id="boot-screen" class="terminal boot-frame">
+    <div id="auth-terminal" class="terminal boot-frame">
         <div id="boot-logs"></div>
-    </div>
-
-    <div id="access-screen" class="terminal" style="display: none;">
-        <p class="directory">SADDROP1220@SYSTEM:~# run authorization_core</p>
-        <p class="warning">! ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY !</p>
-        <p>INITIALIZE INTERFACE? (y/n): <span id="user-input"></span><span class="blink">_</span></p>
-        <div class="mobile-keys">
-            <button onclick="handleInput('y')">PROCEED</button>
-            <button onclick="handleInput('n')">ABORT</button>
+        
+        <div id="access-request" style="display: none; margin-top: 20px; border-top: 1px dashed var(--neon); padding-top: 15px;">
+            <p class="directory">SADDROP1220@SYSTEM:~# run authorization_core</p>
+            <p class="warning">! ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY !</p>
+            <p>INITIALIZE INTERFACE? (y/n): <span id="user-input"></span><span class="blink">_</span></p>
+            <div class="mobile-keys">
+                <button onclick="handleInput('y')">PROCEED</button>
+                <button onclick="handleInput('n')">ABORT</button>
+            </div>
         </div>
     </div>
 
     <div id="main-content" class="interface-grid" style="display: none;">
-        
         <header class="system-header">
             <div class="status-node">
                 <span class="label">CPU_LOAD:</span>
@@ -79,22 +78,23 @@
             "[ OK ] Env Sync Complete", 
             "[ OK ] IP: 85.12.44.1 established", 
             "[ OK ] Security protocols active",
-            "Starting GUI Interface..."
+            "Ready for user authorization..."
         ];
         
         let logIndex = 0;
         function showLogs() {
             if (logIndex < logs.length) {
                 const p = document.createElement('p');
-                p.innerHTML = logs[logIndex].replace("[ OK ]", "<span class='green-text'>[ OK ]</span>");
+                // Заменяем [ OK ] на версию со стилем из CSS
+                p.innerHTML = logs[logIndex].replace("[ OK ]", "<span style='color:var(--neon);'>[ OK ]</span>");
                 document.getElementById('boot-logs').appendChild(p);
                 logIndex++;
                 setTimeout(showLogs, 150);
             } else {
+                // Показываем авторизацию ВНУТРИ того же окна
                 setTimeout(() => { 
-                    document.getElementById('boot-screen').style.display = 'none';
-                    document.getElementById('access-screen').style.display = 'block';
-                }, 600);
+                    document.getElementById('access-request').style.display = 'block';
+                }, 500);
             }
         }
         window.onload = showLogs;
@@ -107,28 +107,27 @@
                 setTimeout(() => { window.location.href = "about:blank"; }, 800);
             }
         }
-        document.addEventListener('keydown', (e) => handleInput(e.key.toLowerCase()));
+
+        // Слушатель клавиатуры
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'y' || key === 'n') handleInput(key);
+        });
 
         function grantAccess() {
-            document.getElementById('access-screen').style.display = 'none';
+            // Скрываем весь терминал авторизации
+            document.getElementById('auth-terminal').style.display = 'none';
             document.getElementById('main-content').style.display = 'grid';
             document.body.classList.remove('off');
             startMatrix();
             updateStats();
         }
 
-        // Обновленная функция сворачивания
         function toggleBlock(header) {
             const block = header.parentElement;
             const state = header.querySelector('.state');
             block.classList.toggle('collapsed');
-            
-            // Динамическая смена иконки
-            if (block.classList.contains('collapsed')) {
-                state.innerText = '[ + ]';
-            } else {
-                state.innerText = '[ - ]';
-            }
+            state.innerText = block.classList.contains('collapsed') ? '[ + ]' : '[ - ]';
         }
 
         function updateStats() {
@@ -148,6 +147,7 @@
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             const drops = Array(Math.floor(canvas.width/16)).fill(1);
             function draw() {
+                // Черный фон с прозрачностью для хвостов
                 ctx.fillStyle = "rgba(2, 2, 5, 0.15)"; 
                 ctx.fillRect(0,0,canvas.width,canvas.height);
                 ctx.fillStyle = "#00ff41"; 
