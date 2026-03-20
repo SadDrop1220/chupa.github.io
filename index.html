@@ -172,6 +172,10 @@
     .inner-content { padding: 16px; color: #eafff2; line-height: 1.6; }
     .block.collapsed .inner-content { display: none; }
 
+    /* Стили для логов истории (MISSION_LOGS) */
+    .history-log p { border-left: 3px solid var(--accent-blue); padding-left: 14px; margin: 10px 0; color: var(--text-dim); }
+    .history-log span { color: var(--accent-blue); font-weight: bold; text-shadow: 0 0 8px var(--blue-glow); }
+
     /* Файловая система */
     .file-system-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,65,.3); padding-bottom: 8px; margin-bottom: 10px; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
     .fs-col-name { flex: 2; }
@@ -185,9 +189,12 @@
 
     .file-row { display: flex; justify-content: space-between; padding: 8px; font-size: 0.85rem; border-bottom: 1px solid rgba(0,255,65,.05); transition: background 0.2s; }
     .file-row:hover { background: rgba(0,255,65,.08); }
-    .file-name { flex: 2; }
-    .file-name a { color: var(--neon); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    
+    /* Исправленный CSS для ссылок файлов */
+    .file-name { flex: 2; display: flex; align-items: center; gap: 8px; }
+    .file-name a { color: var(--neon); text-decoration: none; }
     .file-name a:hover { text-shadow: 0 0 10px var(--neon-glow); text-decoration: underline; }
+    
     .file-size, .file-perms { flex: 1; text-align: right; color: var(--text-dim); }
 
     .highlight { color: #fff; text-shadow: 0 0 8px #fff; }
@@ -260,6 +267,22 @@
             </div>
           </article>
 
+          <article class="block collapsed" id="block-history">
+            <h2 onclick="toggleBlock('block-history')"><span>// MISSION_LOGS</span><span class="state">[ + ]</span></h2>
+            <div class="inner-content history-log" style="max-height: 260px; overflow:auto;">
+              <p><span>[2017]</span> Начал путь с изучения Python.</p>
+              <p><span>[2018]</span> Глубокое освоение Python-библиотек.</p>
+              <p><span>[2020]</span> Запуск бизнес-проекта: игровой сервер Minecraft.</p>
+              <p><span>[2021]</span> Fullstack: Node.js, React и PostgreSQL.</p>
+              <p><span>[2022]</span> Проект Rust. Статистика: 130 активных игроков.</p>
+              <p><span>[2023]</span> Завершение этапа игровых серверов. Анализ ошибок администрирования.</p>
+              <p><span>[2023]</span> Разработка фан-игры (GameMaker Language).</p>
+              <p><span>[2024]</span> Начало профессионального обучения по специальности ИСП.</p>
+              <p><span>[2025]</span> VR/AR (Varwin), ИТ-съезд в СПб, переход в Ethical Hacking.</p>
+              <p style="color: var(--neon);"><span>[2026]</span> Участие в мероприятиях ИСП колледжа. Active phase...<span class="blink"></span></p>
+            </div>
+          </article>
+
           <article class="block" id="block-files">
             <h2 onclick="toggleBlock('block-files')"><span>// REPOSITORY_ACCESS</span><span class="state">[ - ]</span></h2>
             <div class="inner-content">
@@ -278,8 +301,6 @@
     </div> </div> <script>
     /* =========================================
        1) КОНФИГУРАЦИЯ ФАЙЛОВОЙ СИСТЕМЫ
-       Добавляй сюда свои папки и файлы. 
-       Свойство 'url' должно вести на реальный файл (например 'repository_access/file.zip')
        ========================================= */
     const repoData = [
       {
@@ -313,7 +334,7 @@
           
           const contentsDiv = document.createElement('div');
           contentsDiv.className = 'folder-contents';
-          renderFileSystem(item.contents, contentsDiv); // Рекурсия для вложенности
+          renderFileSystem(item.contents, contentsDiv);
 
           folderRow.onclick = () => {
             contentsDiv.classList.toggle('open');
@@ -325,12 +346,13 @@
           folderWrapper.appendChild(contentsDiv);
           container.appendChild(folderWrapper);
         } else {
-          // Файл (с атрибутом download для скачивания)
+          // ИСПРАВЛЕННЫЙ ВЫВОД ФАЙЛА (Иконка вынесена из <a>)
           const fileRow = document.createElement('div');
           fileRow.className = 'file-row';
           fileRow.innerHTML = `
             <span class="file-name">
-              <a href="${item.url}" download="${item.name}">📄 ${item.name}</a>
+              <span style="font-size: 1.1rem;">📄</span>
+              <a href="${item.url}" download="${item.name}">${item.name}</a>
             </span>
             <span class="file-size">${item.size}</span>
             <span class="file-perms">${item.perms}</span>
@@ -340,7 +362,6 @@
       });
     }
 
-    // Рендерим при загрузке
     const fsContainer = document.getElementById('fs-container');
     renderFileSystem(repoData, fsContainer);
 
@@ -436,7 +457,6 @@
         ctx.fillStyle = "#00ff41";
         ctx.font = fontSize + "px monospace";
 
-        // Защита при ресайзе
         if (drops.length < Math.floor(canvas.width / fontSize)) {
           columns = Math.floor(canvas.width / fontSize);
           drops = Array(columns).fill(1);
