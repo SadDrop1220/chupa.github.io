@@ -2,7 +2,8 @@
   --neon: #00ff41;
   --neon-glow: rgba(0, 255, 65, 0.6);
   --bg-dark: #0a0a0f;
-  --panel-bg: rgba(8, 12, 26, 0.92);
+  /* Сделали фон панелей чуть прозрачнее, чтобы видеть матрицу */
+  --panel-bg: rgba(8, 12, 26, 0.85); 
   --accent-blue: #00a2ff;
   --blue-glow: rgba(0, 170, 255, 0.5);
   --text-dim: #a0a0a0;
@@ -10,33 +11,24 @@
   --card-border: rgba(0, 255, 65, 0.4);
 }
 
-/* Кастомный скроллбар (Webkit) */
+/* Кастомный скроллбар */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(8, 12, 26, 0.6);
-  border-left: 1px solid rgba(0, 255, 65, 0.1);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--neon);
-  border-radius: 4px;
-  box-shadow: 0 0 10px var(--neon-glow);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-  box-shadow: 0 0 15px #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 8px var(--neon-glow);
 }
 
 * {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-shadow: 0 0 8px var(--neon-glow), 0 0 12px rgba(0,255,65,.2);
-  /* Кастомный скроллбар (Firefox) */
-  scrollbar-width: thin;
-  scrollbar-color: var(--neon) rgba(8, 12, 26, 0.6);
+  text-shadow: 0 0 8px var(--neon-glow);
 }
 
 html, body {
@@ -45,18 +37,10 @@ html, body {
   background: var(--bg-dark);
   font-family: "Consolas", "Monaco", monospace;
   color: #eafff2;
-  overflow: hidden; /* Оставляем скрытым, чтобы не было системного скролла страницы */
-}
-
-body {
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  background-image:
-    linear-gradient(rgba(0,255,65,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,65,.05) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
 /* Матрица фон */
@@ -65,161 +49,148 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 0;
-  opacity: 0.6;
-  filter: brightness(1.15) contrast(1.15);
+  opacity: 0.5;
 }
+
 .scanline {
   position: fixed; top: 0; left: 0; width: 100%; height: 3px;
-  background: rgba(0, 255, 65, 0.25);
+  background: rgba(0, 255, 65, 0.1);
   z-index: 1;
   pointer-events: none;
-  animation: scan 6s linear infinite;
+  animation: scan 8s linear infinite;
 }
 @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
 /* Блок загрузки / авторизации */
 .boot-frame {
-  border: 2px solid var(--neon);
-  background: rgba(3, 8, 20, 0.92);
-  padding: 28px;
+  border: 1px solid var(--neon);
+  background: rgba(3, 8, 20, 0.9);
+  padding: 20px;
   border-radius: 8px;
-  width: min(930px, 95vw);
-  box-shadow: 0 0 70px var(--neon-glow), inset 0 0 28px rgba(0,255,65,.25);
+  width: min(900px, 90vw);
+  max-height: 80vh;
+  box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
   position: relative;
   z-index: 5;
   overflow: hidden;
 }
-.boot-frame::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: 10px;
-  padding: 2px;
-  background: linear-gradient(45deg, rgba(0,255,65,.4), transparent);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  pointer-events: none;
-}
+
 .logs {
-  max-height: 270px;
+  max-height: 200px;
   overflow: auto;
-  padding-right: 4px;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.4;
-  color: #e7ffe7;
+  margin-bottom: 10px;
 }
-.logs p { margin: 2px 0; }
-.logs span { color: var(--neon); font-weight: bold; }
 
-.auth-stage { padding-top: 6px; border-top: 2px dashed rgba(0,255,65,.3); margin-top: 14px; }
-
-.prompt { font-weight: bold; color: #c9ffd6; }
-.muted { color: var(--text-dim); }
-.warning { color: var(--warning-red); font-weight: bold; margin: 6px 0 0; }
-.highlight { color: #fff; text-shadow: 0 0 8px #fff; }
-.blink { animation: blink 0.8s infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-
-/* кнопки */
-.mobile-keys {
-  display: flex; gap: 14px; margin-top: 8px;
+.auth-stage { 
+  padding-top: 10px; 
+  border-top: 1px dashed var(--card-border); 
 }
+
+/* Кнопки */
+.mobile-keys { display: flex; gap: 10px; margin-top: 10px; }
 .mobile-keys button {
+  flex: 1;
   background: transparent;
-  border: 2px solid var(--neon);
+  border: 1px solid var(--neon);
   color: var(--neon);
-  padding: 12px 28px;
+  padding: 10px;
   font-weight: bold;
   cursor: pointer;
-  border-radius: 6px;
-  box-shadow: 0 0 14px var(--neon-glow);
-  transition: 0.25s ease;
+  border-radius: 4px;
+  transition: 0.2s;
 }
 .mobile-keys button:hover {
   background: var(--neon);
   color: #000;
-  box-shadow: 0 0 28px var(--neon);
 }
 
 /* Главный интерфейс */
 .interface-grid {
   display: flex;
   flex-direction: column;
-  width: min(1200px, 98vw);
-  height: min(92vh, 680px);
-  gap: 12px;
+  width: min(1200px, 94vw);
+  height: 85vh; /* Уменьшили высоту, чтобы было видно матрицу сверху и снизу */
+  gap: 10px;
   z-index: 10;
   position: relative;
-  border-radius: 8px;
-  padding: 6px;
 }
 
 /* Шапка мониторинга */
 .system-header {
   background: var(--panel-bg);
-  border: 2px solid var(--accent-blue);
-  padding: 14px 18px;
-  display: flex; gap: 12px;
+  border: 1px solid var(--accent-blue);
+  padding: 10px 15px;
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 8px;
-  box-shadow: 0 0 26px var(--blue-glow);
+  border-radius: 6px;
+  font-size: 0.85rem;
 }
-.status-node { display: flex; align-items: center; gap: 8px; color: #fff; }
+
+.status-node { display: flex; align-items: center; gap: 6px; }
 .pulse-dot {
-  width: 10px; height: 10px; border-radius: 50%; background: var(--neon);
-  box-shadow: 0 0 12px var(--neon);
-  animation: pulse 0.9s infinite alternate;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--neon);
+  animation: pulse 1s infinite alternate;
 }
-@keyframes pulse { 0% { transform: scale(0.9); opacity: .6; } 100% { transform: scale(1.15); opacity: 1; } }
+@keyframes pulse { from { opacity: 0.4; } to { opacity: 1; } }
 
-.mini-bar { width: 180px; height: 12px; background: #000; border:1px solid rgba(0,255,65,.4); position: relative; overflow:hidden; border-radius: 6px; }
-.mini-bar-fill { height:100%; width:0%; background: var(--neon); transition: width .4s ease; box-shadow: 0 0 12px var(--neon); }
+.mini-bar { width: 80px; height: 8px; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,255,65,0.2); }
+.mini-bar-fill { height: 100%; background: var(--neon); transition: width 0.5s; }
 
-/* Основной контент: консоль-терминал */
+/* Терминал */
 .terminal-main {
   flex-grow: 1;
   background: var(--panel-bg);
-  border: 1px solid rgba(0,255,65,.4);
-  border-top: 5px solid var(--neon);
-  padding: 18px;
-  overflow: auto; /* Именно этот блок берет на себя скролл */
-  -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
-  box-shadow: 0 0 28px rgba(0,0,0,.8);
-  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-top: 3px solid var(--neon);
+  padding: 15px;
+  overflow-y: auto;
+  border-radius: 6px;
+  -webkit-overflow-scrolling: touch;
 }
-.block { margin-bottom: 14px; border: 1px solid rgba(0,255,65,.25); background: rgba(0,255,65,.03); transition: all .25s ease; border-radius: 6px; }
+
+.block { margin-bottom: 10px; border: 1px solid rgba(0, 255, 65, 0.15); border-radius: 4px; }
 .block h2 {
-  margin: 0; padding: 12px 14px;
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 0.95rem; cursor: pointer;
-  border-bottom: 1px solid rgba(0,255,65,.15);
-  background: rgba(0,255,65,.08);
+  margin: 0; padding: 10px;
+  display: flex; justify-content: space-between;
+  font-size: 0.85rem; background: rgba(0, 255, 65, 0.05);
 }
-.block h2:hover { background: rgba(0,255,65,.15); text-shadow: 0 0 12px var(--neon); }
-.inner-content { padding: 16px 18px; color: #eafff2; }
 
-/* Сворачивание */
-.block.collapsed .inner-content { display: none; }
+.inner-content { padding: 12px; font-size: 0.9rem; line-height: 1.5; }
+.history-log p { border-left: 2px solid var(--accent-blue); padding-left: 10px; font-size: 0.85rem; }
 
-/* История логов и прочее */
-.history-log p { border-left: 3px solid var(--accent-blue); padding-left: 14px; margin: 8px 0; color: var(--text-dim); overflow: auto; }
-.history-log span { color: var(--accent-blue); font-weight: bold; }
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+  .interface-grid {
+    height: 80vh; /* Еще компактнее на маленьких телефонах */
+    width: 90vw;
+  }
+  
+  .system-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
 
-/* Шрифт и акценты */
-.brand { font-weight: bold; color: #fff; }
-.highlight { color: #fff; text-shadow: 0 0 8px #fff; }
-.italic { font-style: italic; }
+  .cpu-ram { width: 100%; justify-content: space-between; }
+  
+  .status-node span { font-size: 0.75rem; }
 
-/* Селектор для состояния блока */
-.state { font-weight: bold; }
-
-/* Адаптивность */
-@media (max-width: 900px) {
-  .system-header { flex-wrap: wrap; gap: 8px; }
-  .mini-bar { width: 150px; }
-  /* Задаем жесткие рамки экрана, чтобы заработал внутренний скролл */
-  .interface-grid { height: 96vh; max-height: 96vh; }
+  .boot-frame {
+    padding: 15px;
+    width: 85vw;
+  }
+  
+  .logs { max-height: 150px; font-size: 12px; }
+  
+  .brand { font-size: 0.9rem; }
 }
+
+/* Утилиты */
+.highlight { color: #fff; }
+.muted { color: var(--text-dim); }
+.warning { color: var(--warning-red); }
+.blink { animation: blink 0.8s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
