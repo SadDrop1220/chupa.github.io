@@ -4,132 +4,353 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SADDROP1220 // SECURE_SHELL — HYPERHACK INTERFACE</title>
-  <link rel="stylesheet" href="style.css?v=3.2">
+  <style>
+    :root {
+      --neon: #00ff41;
+      --neon-glow: rgba(0, 255, 65, 0.6);
+      --bg-dark: #050508;
+      --panel-bg: rgba(5, 8, 15, 0.85); 
+      --accent-blue: #00a2ff;
+      --blue-glow: rgba(0, 170, 255, 0.5);
+      --warning-red: #ff3e3e;
+      --red-glow: rgba(255, 62, 62, 0.6);
+      --text-dim: #8b9bb4;
+      --tablet-border: #12141c;
+    }
+
+    /* Скроллбар Webkit */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.6); border-left: 1px solid rgba(0, 255, 65, 0.1); }
+    ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 4px; box-shadow: 0 0 10px var(--neon-glow); }
+    ::-webkit-scrollbar-thumb:hover { background: #fff; box-shadow: 0 0 15px #fff; }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      scrollbar-width: thin;
+      scrollbar-color: var(--neon) rgba(0, 0, 0, 0.6);
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: "Consolas", "Monaco", monospace;
+      color: #eafff2;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background-image:
+        radial-gradient(circle at 50% 50%, #111 0%, #000 100%),
+        linear-gradient(rgba(0,255,65,.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,.02) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* АППАРАТНАЯ РАМКА ПЛАНШЕТА */
+    .tablet-frame {
+      position: relative;
+      width: min(1300px, 96vw);
+      height: min(90vh, 850px);
+      background: var(--tablet-border);
+      border-radius: 28px;
+      padding: 24px 16px 30px 16px;
+      box-shadow: 
+        0 30px 60px rgba(0,0,0,0.9),
+        inset 0 0 0 2px #2a2d3d,
+        inset 0 0 15px rgba(0,0,0,1),
+        0 0 40px rgba(0, 255, 65, 0.15);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    /* Усиленные углы корпуса */
+    .tablet-frame::before, .tablet-frame::after {
+      content: ''; position: absolute; width: 40px; height: 40px;
+      border: 2px solid #333; pointer-events: none; border-radius: 8px;
+    }
+    .tablet-frame::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+    .tablet-frame::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+    /* Датчики и камера наверху планшета */
+    .tablet-hardware-top {
+      position: absolute;
+      top: 6px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; align-items: center; gap: 12px;
+      background: #090a0f;
+      padding: 4px 20px;
+      border-radius: 0 0 12px 12px;
+      border: 1px solid #2a2d3d; border-top: none;
+      box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5);
+      z-index: 20;
+    }
+    .camera { width: 10px; height: 10px; border-radius: 50%; background: #000; border: 1px solid #444; box-shadow: inset 0 0 4px #0055ff; }
+    .sensor { width: 6px; height: 6px; border-radius: 50%; background: #222; }
+
+    /* ЭКРАН ПЛАНШЕТА */
+    .tablet-screen {
+      flex-grow: 1;
+      background: var(--bg-dark);
+      border: 3px solid #001a08;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 50px rgba(0, 255, 65, 0.05);
+    }
+
+    /* Матрица фон */
+    #matrix {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1; opacity: 0.6; pointer-events: none;
+    }
+
+    .scanline {
+      position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+      background: linear-gradient(to bottom, transparent, rgba(0, 255, 65, 0.4), transparent);
+      z-index: 4; pointer-events: none; animation: scan 4s linear infinite;
+    }
+    @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
+
+    /* Эффект свечения экрана на корпус */
+    .screen-glow {
+      position: absolute; inset: 0; box-shadow: inset 0 0 80px rgba(0,255,65,0.1); pointer-events: none; z-index: 5;
+    }
+
+    /* === BOOT SCREEN === */
+    .boot-frame {
+      border: 1px solid var(--neon);
+      background: rgba(5, 8, 15, 0.9);
+      padding: 30px; border-radius: 8px;
+      width: min(800px, 90%);
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.1), inset 0 0 20px rgba(0,255,65,.05);
+      position: relative; z-index: 10; backdrop-filter: blur(4px);
+    }
+    .logs { max-height: 250px; overflow-y: auto; font-family: "Courier New", monospace; font-size: 14px; color: #e7ffe7; }
+    .logs p { margin: 4px 0; }
+    .logs span { color: var(--neon); font-weight: bold; text-shadow: 0 0 8px var(--neon-glow); }
+    .auth-stage { padding-top: 15px; border-top: 1px dashed rgba(0,255,65,.3); margin-top: 20px; }
+    .prompt { font-weight: bold; color: #c9ffd6; text-shadow: 0 0 8px var(--neon-glow); }
+    .warning { color: var(--warning-red); font-weight: bold; padding: 8px; border: 1px solid rgba(255, 62, 62, 0.3); background: rgba(255, 62, 62, 0.08); text-shadow: 0 0 8px var(--red-glow); text-align: center; }
+    .mobile-keys { display: flex; gap: 14px; margin-top: 20px; }
+    .mobile-keys button { background: rgba(0, 255, 65, 0.05); border: 1px solid var(--neon); color: var(--neon); padding: 12px 24px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: all 0.2s; flex: 1; letter-spacing: 2px; }
+    .mobile-keys button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
+
+    /* === ГЛАВНЫЙ ИНТЕРФЕЙС === */
+    .interface-grid {
+      display: flex; flex-direction: column; width: 100%; height: 100%; gap: 12px; z-index: 10; position: relative; padding: 16px;
+    }
+
+    /* Шапка мониторинга */
+    .system-header {
+      background: var(--panel-bg); border: 1px solid var(--accent-blue); padding: 12px 20px; display: flex; gap: 15px; justify-content: space-between; align-items: center; border-radius: 6px; box-shadow: 0 4px 20px rgba(0, 162, 255, 0.1); border-left: 4px solid var(--accent-blue); backdrop-filter: blur(5px);
+    }
+    .status-node { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 0.9rem; }
+    .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 12px var(--neon-glow); animation: pulse 0.9s infinite alternate; }
+    @keyframes pulse { 0% { transform: scale(0.9); opacity: .6; } 100% { transform: scale(1.15); opacity: 1; } }
+    .mini-bar { width: 150px; height: 8px; background: rgba(0,0,0,0.6); border:1px solid rgba(0,255,65,.3); position: relative; overflow:hidden; border-radius: 4px; }
+    .mini-bar-fill { height:100%; width:0%; background: var(--neon); transition: width .4s ease; box-shadow: 0 0 10px var(--neon-glow); }
+
+    /* Терминал */
+    .terminal-main {
+      flex-grow: 1; background: var(--panel-bg); border: 1px solid rgba(0,255,65,.2); border-top: 3px solid var(--neon); padding: 16px; overflow-y: auto; border-radius: 6px; backdrop-filter: blur(5px);
+    }
+    .block { margin-bottom: 16px; border: 1px solid rgba(0,255,65,.1); background: rgba(0,255,65,.02); transition: all .25s ease; border-radius: 4px; overflow: hidden; }
+    .block h2 { margin: 0; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; cursor: pointer; border-bottom: 1px solid rgba(0,255,65,.1); background: rgba(0,255,65,.08); color: var(--neon); letter-spacing: 1px; }
+    .block h2:hover { background: rgba(0,255,65,.15); text-shadow: 0 0 8px var(--neon-glow); }
+    .inner-content { padding: 16px; color: #eafff2; line-height: 1.6; }
+    .block.collapsed .inner-content { display: none; }
+
+    /* Файловая система */
+    .file-system-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,65,.3); padding-bottom: 8px; margin-bottom: 10px; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
+    .fs-col-name { flex: 2; }
+    .fs-col-size, .fs-col-perms { flex: 1; text-align: right; }
+    
+    .folder-row { display: flex; align-items: center; gap: 8px; padding: 8px; cursor: pointer; color: var(--accent-blue); font-weight: bold; border-radius: 4px; transition: background 0.2s; }
+    .folder-row:hover { background: rgba(0, 170, 255, 0.1); }
+    .folder-icon { font-family: monospace; font-size: 1.1rem; width: 20px; display: inline-block; }
+    .folder-contents { display: none; margin-left: 12px; padding-left: 10px; border-left: 1px dashed rgba(0, 170, 255, 0.3); }
+    .folder-contents.open { display: block; }
+
+    .file-row { display: flex; justify-content: space-between; padding: 8px; font-size: 0.85rem; border-bottom: 1px solid rgba(0,255,65,.05); transition: background 0.2s; }
+    .file-row:hover { background: rgba(0,255,65,.08); }
+    .file-name { flex: 2; }
+    .file-name a { color: var(--neon); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .file-name a:hover { text-shadow: 0 0 10px var(--neon-glow); text-decoration: underline; }
+    .file-size, .file-perms { flex: 1; text-align: right; color: var(--text-dim); }
+
+    .highlight { color: #fff; text-shadow: 0 0 8px #fff; }
+    .blink { animation: blink 0.8s infinite; display: inline-block; width: 8px; height: 1em; background: var(--neon); vertical-align: middle; margin-left: 4px; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @media (max-width: 900px) {
+      .tablet-frame { padding: 12px 8px 20px 8px; border-radius: 20px; width: 98vw; height: 98vh; }
+      .system-header { flex-direction: column; align-items: flex-start; }
+      .status-node { width: 100%; justify-content: space-between; }
+      .mini-bar { width: 120px; }
+      .boot-frame { width: 95%; padding: 20px; }
+    }
+  </style>
 </head>
-<body class="booting">
+<body>
 
-  <canvas id="matrix" aria-label="Матрица" role="img"></canvas>
-  <div class="scanline" aria-hidden="true"></div>
-
-  <section id="boot-screen" class="boot-frame" aria-label="Загрузка">
-    <div id="boot-logs" class="logs" style="font-family: monospace;"></div>
-
-    <div id="auth-flash" class="auth-stage" style="margin-top: 14px; display: none;">
-      <p class="muted" style="margin:0 0 6px;">
-        <span class="prompt">SADDROP1220@SYSTEM:~#</span> run authorization_core
-      </p>
-      <p class="warning" aria-live="polite" style="margin:6px 0 12px;">
-        [!] WARNING: ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY [!]
-      </p>
-      <p class="muted" style="margin:0;">
-        INITIALIZE INTERFACE? (y/n):
-        <span id="user-input" class="highlight" aria-label="ввод пользователя"></span>
-        <span class="blink" style="border-left: 6px solid var(--neon); margin-left: 8px; display:inline-block; width: 8px;"></span>
-      </p>
-      <div class="mobile-keys" role="group" aria-label="Клавиатура запуска" style="margin-top: 8px;">
-        <button onclick="handleInput('y')">PROCEED</button>
-        <button onclick="handleInput('n')">ABORT</button>
-      </div>
+  <div class="tablet-frame">
+    <div class="tablet-hardware-top">
+      <div class="sensor"></div>
+      <div class="camera"></div>
+      <div class="sensor"></div>
     </div>
-  </section>
 
-  <section id="main-interface" class="interface-grid" style="display: none;" aria-label="Главный интерфейс">
+    <div class="tablet-screen">
+      <canvas id="matrix"></canvas>
+      <div class="scanline"></div>
+      <div class="screen-glow"></div>
 
-    <header class="system-header" aria-label="Статусы системы">
-      <div class="status-node">
-        <span class="pulse-dot" aria-hidden="true"></span>
-        <span>UPLINK: <span class="highlight">ACTIVE_ENCRYPTED</span></span>
-      </div>
-
-      <div class="status-node">
-        <span>NODE_ID: <span class="highlight">0x99_ALPHA</span></span>
-      </div>
-
-      <div class="status-node cpu-ram">
-        <span>CPU: <span id="cpu-val" class="highlight">--</span>%</span>
-        <div class="mini-bar" aria-label="CPU загрузка" role="meter">
-          <div id="cpu-bar" class="mini-bar-fill" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <div class="status-node cpu-ram">
-        <span>RAM: <span id="ram-val" class="highlight">--</span>%</span>
-        <div class="mini-bar" aria-label="RAM загрузка" role="meter">
-          <div id="ram-bar" class="mini-bar-fill" style="width: 0%"></div>
-        </div>
-      </div>
-    </header>
-
-    <main class="terminal-main" role="main" aria-label="Терминал">
-
-      <article class="block collapsed" id="block-bio" aria-label="Биография пользователя">
-        <h2 onclick="toggleBlock('block-bio')">
-          <span>// USER_BIO_EXTRACT</span>
-          <span class="state">[ + ]</span>
-        </h2>
-        <div class="inner-content">
-          <p class="brand" style="color: var(--neon); font-weight: bold; font-size: 1.05rem; margin-bottom: 8px;">
-            > Fullstack Developer & Security Researcher
+      <section id="boot-screen" class="boot-frame">
+        <div id="boot-logs" class="logs"></div>
+        <div id="auth-flash" class="auth-stage" style="display: none;">
+          <p class="prompt">SADDROP1220@SYSTEM:~# run authorization_core</p>
+          <p class="warning">[!] УГРОЗА БЕЗОПАСНОСТИ: ДОСТУП ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ [!]</p>
+          <p style="color: var(--text-dim);">
+            INITIALIZE INTERFACE? (y/n):
+            <span id="user-input" class="highlight"></span><span class="blink"></span>
           </p>
-          <p class="muted" style="line-height: 1.75;">
-            Строю защищенные цифровые экосистемы, используя опыт в системном программировании и наступательной безопасности.
-            Владею стеком <span class="highlight">C#, Java, Python, Node.js</span>. Глубоко работаю с
-            <span class="highlight"> Linux</span> и <span class="highlight">PostgreSQL</span>.
-            Проектирую системы с учетом векторов атак, применяя навыки <span style="color: var(--neon);">Ethical Hacking</span>.
-          </p>
-          <p class="italic" style="font-style: italic; color: var(--neon); opacity: 0.8; border-top: 1px solid rgba(0,255,65,.2); padding-top: 12px;">
-            «Код должен быть элегантным и надежным. Я предпочитаю и то, и другое».
-          </p>
-        </div>
-      </article>
-
-      <article class="block collapsed" id="block-history" aria-label="История проектов">
-        <h2 onclick="toggleBlock('block-history')">
-          <span>// MISSION_LOGS</span>
-          <span class="state">[ + ]</span>
-        </h2>
-        <div class="inner-content history-log" style="max-height: 260px; overflow:auto;">
-          <p><span>[2017]</span> Начал путь с изучения Python.</p>
-          <p><span>[2018]</span> Глубокое освоение Python-библиотек.</p>
-          <p><span>[2020]</span> Запуск бизнес-проекта: игровой сервер Minecraft.</p>
-          <p><span>[2021]</span> Fullstack: Node.js, React и PostgreSQL.</p>
-          <p><span>[2022]</span> Проект Rust. Статистика: 130 активных игроков.</p>
-          <p><span>[2023]</span> Завершение этапа игровых серверов. Анализ ошибок администрирования.</p>
-          <p><span>[2023]</span> Разработка фан-игры (GameMaker Language).</p>
-          <p><span>[2024]</span> Начало профессионального обучения по специальности ИСП.</p>
-		  <p><span>[2025]</span> VR/AR (Varwin), ИТ-съезд в СПб, переход в Ethical Hacking.</p>
-          <p style="color: var(--neon);"><span>[2026]</span> Участие в мероприятиях ИСП колледжа. Active phase...<span class="blink"></span></p>
-        </div>
-      </article>
-
-      <article class="block collapsed" id="block-files" aria-label="Файлы репозитория">
-        <h2 onclick="toggleBlock('block-files')">
-          <span>// REPOSITORY_ACCESS</span>
-          <span class="state">[ + ]</span>
-        </h2>
-        <div class="inner-content">
-          <div class="table-row" style="display:flex; justify-content: space-between; border-bottom:1px solid rgba(0,255,65,.3); padding-bottom:6px; margin-bottom:6px; font-size:.85rem;">
-            <span>PERMS</span><span>SIZE</span><span>OBJECT_NAME</span>
-          </div>
-          <div class="table-row" style="display:flex; justify-content: space-between; margin:6px 0;">
-            <span style="opacity:.75;">rwx-r--</span><span>4.2k</span><a href="#" style="color: var(--neon); font-weight: bold;">CHUPA_BOT.core</a>
-          </div>
-          <div class="table-row" style="display:flex; justify-content: space-between;">
-            <span style="opacity:.75;">r--r--r</span><span>12kb</span><a href="#" style="color: var(--neon); font-weight: bold;">CORE_ALPHA.sys</a>
+          <div class="mobile-keys">
+            <button onclick="handleInput('y')">PROCEED</button>
+            <button onclick="handleInput('n')">ABORT</button>
           </div>
         </div>
-      </article>
+      </section>
 
-    </main>
+      <section id="main-interface" class="interface-grid" style="display: none;">
+        
+        <header class="system-header">
+          <div class="status-node"><span class="pulse-dot"></span><span>UPLINK: <span class="highlight">SECURE_TUNNEL</span></span></div>
+          <div class="status-node"><span>NODE: <span class="highlight">0x99_ALPHA</span></span></div>
+          <div class="status-node">
+            <span>CPU</span>
+            <div class="mini-bar"><div id="cpu-bar" class="mini-bar-fill" style="width: 0%"></div></div>
+            <span id="cpu-val" class="highlight">--</span>%
+          </div>
+          <div class="status-node">
+            <span>RAM</span>
+            <div class="mini-bar"><div id="ram-bar" class="mini-bar-fill" style="width: 0%"></div></div>
+            <span id="ram-val" class="highlight">--</span>%
+          </div>
+        </header>
 
-  </section>
+        <main class="terminal-main">
+          
+          <article class="block collapsed" id="block-bio">
+            <h2 onclick="toggleBlock('block-bio')"><span>// USER_BIO_EXTRACT</span><span class="state">[ + ]</span></h2>
+            <div class="inner-content">
+              <p style="color: var(--neon); font-weight: bold; font-size: 1.05rem; margin-bottom: 8px;">> Fullstack Developer & Security Researcher</p>
+              <p style="color: var(--text-dim); line-height: 1.75;">Строю защищенные цифровые экосистемы... Владею стеком <span class="highlight">C#, Java, Python, Node.js</span>. Глубоко работаю с <span class="highlight">Linux</span> и <span class="highlight">PostgreSQL</span>.</p>
+            </div>
+          </article>
 
-  <script>
-    // 1) ЛОГИ
+          <article class="block" id="block-files">
+            <h2 onclick="toggleBlock('block-files')"><span>// REPOSITORY_ACCESS</span><span class="state">[ - ]</span></h2>
+            <div class="inner-content">
+              <div class="file-system-header">
+                <span class="fs-col-name">OBJECT_NAME</span>
+                <span class="fs-col-size">SIZE</span>
+                <span class="fs-col-perms">PERMS</span>
+              </div>
+              <div id="fs-container"></div>
+            </div>
+          </article>
+
+        </main>
+      </section>
+
+    </div> </div> <script>
+    /* =========================================
+       1) КОНФИГУРАЦИЯ ФАЙЛОВОЙ СИСТЕМЫ
+       Добавляй сюда свои папки и файлы. 
+       Свойство 'url' должно вести на реальный файл (например 'repository_access/file.zip')
+       ========================================= */
+    const repoData = [
+      {
+        type: 'folder',
+        name: 'PROJECTS_2026',
+        contents: [
+          { type: 'file', name: 'payload_v2.py', size: '14 KB', perms: 'rwx-r--', url: 'repository_access/payload_v2.py' },
+          { type: 'file', name: 'network_map.pdf', size: '2.1 MB', perms: 'r--r--r', url: 'repository_access/network_map.pdf' }
+        ]
+      },
+      {
+        type: 'folder',
+        name: 'ARCHIVE_DECRYPTED',
+        contents: [
+          { type: 'file', name: 'client_base.sql', size: '45 MB', perms: 'r--------', url: 'repository_access/client_base.sql' },
+          { type: 'file', name: 'CORE_ALPHA.sys', size: '12 KB', perms: 'r--r--r', url: 'repository_access/CORE_ALPHA.sys' }
+        ]
+      },
+      { type: 'file', name: 'CHUPA_BOT.core', size: '4.2 KB', perms: 'rwx-r--', url: 'repository_access/CHUPA_BOT.core' },
+      { type: 'file', name: 'README.md', size: '1 KB', perms: 'rw-r--r--', url: 'repository_access/README.md' }
+    ];
+
+    function renderFileSystem(data, container) {
+      data.forEach(item => {
+        if (item.type === 'folder') {
+          const folderWrapper = document.createElement('div');
+          
+          const folderRow = document.createElement('div');
+          folderRow.className = 'folder-row';
+          folderRow.innerHTML = `<span class="folder-icon">[+]</span> <span>/${item.name}</span>`;
+          
+          const contentsDiv = document.createElement('div');
+          contentsDiv.className = 'folder-contents';
+          renderFileSystem(item.contents, contentsDiv); // Рекурсия для вложенности
+
+          folderRow.onclick = () => {
+            contentsDiv.classList.toggle('open');
+            const icon = folderRow.querySelector('.folder-icon');
+            icon.innerText = contentsDiv.classList.contains('open') ? '[-]' : '[+]';
+          };
+
+          folderWrapper.appendChild(folderRow);
+          folderWrapper.appendChild(contentsDiv);
+          container.appendChild(folderWrapper);
+        } else {
+          // Файл (с атрибутом download для скачивания)
+          const fileRow = document.createElement('div');
+          fileRow.className = 'file-row';
+          fileRow.innerHTML = `
+            <span class="file-name">
+              <a href="${item.url}" download="${item.name}">📄 ${item.name}</a>
+            </span>
+            <span class="file-size">${item.size}</span>
+            <span class="file-perms">${item.perms}</span>
+          `;
+          container.appendChild(fileRow);
+        }
+      });
+    }
+
+    // Рендерим при загрузке
+    const fsContainer = document.getElementById('fs-container');
+    renderFileSystem(repoData, fsContainer);
+
+    /* =========================================
+       2) ЛОГИКА ЗАГРУЗКИ И ИНТЕРФЕЙСА
+       ========================================= */
     const bootData = [
       "[ OK ] BIOS Checksum valid",
       "[ OK ] Initializing Secure Kernel...",
-      "[ OK ] IP Address: 85.12.44.1 (Static)",
+      "[ OK ] Mounting Encrypted Drives...",
       "[ OK ] Neural interface linked",
       "[ OK ] Firewall: Level 7 Active",
       "Waiting for credentials..."
@@ -139,62 +360,43 @@
     function printLogs() {
       if (line < bootData.length) {
         const p = document.createElement('p');
-        p.innerHTML = bootData[line].replace("[ OK ]", "<span style='color:var(--neon); font-weight:bold;'>[ OK ]</span>");
-        p.style.margin = "4px 0";
+        p.innerHTML = bootData[line].replace("[ OK ]", "<span style='color:var(--neon);'>[ OK ]</span>");
         document.getElementById('boot-logs').appendChild(p);
         line++;
-        setTimeout(printLogs, 120);
+        setTimeout(printLogs, 150);
       } else {
-        // ЛОГИ ОКОНЧЕНЫ. Ждем 2 секунды (2000 мс) и показываем блок авторизации
         setTimeout(() => {
-          const authBlock = document.getElementById('auth-flash');
-          authBlock.style.display = 'block';
-          
-          // Плавное появление
-          authBlock.style.opacity = '0';
-          authBlock.style.transition = 'opacity 0.4s ease-in';
-          
-          // Небольшая задержка перед изменением opacity, чтобы браузер успел применить display: block
-          setTimeout(() => {
-            authBlock.style.opacity = '1';
-          }, 50);
-        }, 2000); 
+          const auth = document.getElementById('auth-flash');
+          auth.style.display = 'block';
+          auth.style.opacity = '0';
+          auth.style.transition = 'opacity 0.4s';
+          setTimeout(() => auth.style.opacity = '1', 50);
+        }, 1000);
       }
     }
 
-    window.addEventListener('load', () => {
-      printLogs();
-    });
+    window.addEventListener('load', () => { printLogs(); startMatrix(); });
 
-    // 2) Ввод / авторизация
     function handleInput(key) {
       document.getElementById('user-input').innerText = key;
-      // При нажатии Y — переход к основному интерфейсу сразу после небольшого таймаута
       if (key === 'y') {
-        // Убрать boot-screen -> показать main-interface
         setTimeout(() => {
           document.getElementById('boot-screen').style.display = 'none';
           document.getElementById('main-interface').style.display = 'flex';
-          // запустить матрицу и статистику
-          startMatrix();
           updateStats();
-        }, 150);
+        }, 300);
       } else if (key === 'n') {
-        document.body.classList.add('tv-off');
-        setTimeout(() => window.location.href = "about:blank", 600);
+        document.querySelector('.tablet-screen').style.background = '#000';
+        document.querySelector('.tablet-screen').innerHTML = '<h1 style="color:red; text-align:center; margin-top:50%;">SYSTEM HALTED</h1>';
       }
     }
 
     document.addEventListener('keydown', (e) => {
       const k = e.key.toLowerCase();
-      // Ограничиваем ввод только если блок авторизации уже показан
-      const authBlock = document.getElementById('auth-flash');
-      if (authBlock.style.display === 'block' && (k === 'y' || k === 'n')) {
-        handleInput(k);
-      }
+      const auth = document.getElementById('auth-flash');
+      if (auth.style.display === 'block' && (k === 'y' || k === 'n')) handleInput(k);
     });
 
-    // 3) Сворачивание
     function toggleBlock(id) {
       const el = document.getElementById(id);
       const state = el.querySelector('.state');
@@ -202,62 +404,59 @@
       state.innerText = isCollapsed ? '[ + ]' : '[ - ]';
     }
 
-    // 4) Мониторинг
     function updateStats() {
       setInterval(() => {
-        const cpu = Math.floor(Math.random() * 25 + 15);
-        const ram = Math.floor(Math.random() * 10 + 50);
+        const cpu = Math.floor(Math.random() * 30 + 10);
+        const ram = Math.floor(Math.random() * 15 + 45);
         document.getElementById('cpu-val').innerText = cpu;
         document.getElementById('ram-val').innerText = ram;
         document.getElementById('cpu-bar').style.width = cpu + "%";
         document.getElementById('ram-bar').style.width = ram + "%";
-      }, 1200);
+      }, 1500);
     }
 
-    // 5) Матрица
+    /* =========================================
+       3) МАТРИЦА НА ФОНЕ
+       ========================================= */
     function startMatrix() {
       const canvas = document.getElementById('matrix');
       const ctx = canvas.getContext('2d');
-      const resize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      };
+      const resize = () => { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; };
       window.addEventListener('resize', resize);
       resize();
 
       const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       const fontSize = 16;
-      const columns = Math.floor(canvas.width / fontSize);
-      const drops = Array(columns).fill(1);
+      let columns = Math.floor(canvas.width / fontSize);
+      let drops = Array(columns).fill(1);
 
       function draw() {
-        ctx.fillStyle = "rgba(2, 2, 5, 0.15)";
+        ctx.fillStyle = "rgba(5, 5, 8, 0.15)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         ctx.fillStyle = "#00ff41";
         ctx.font = fontSize + "px monospace";
+
+        // Защита при ресайзе
+        if (drops.length < Math.floor(canvas.width / fontSize)) {
+          columns = Math.floor(canvas.width / fontSize);
+          drops = Array(columns).fill(1);
+        }
 
         for (let i = 0; i < drops.length; i++) {
           const text = chars.charAt(Math.floor(Math.random() * chars.length));
           ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-          }
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
           drops[i]++;
         }
       }
-      // использовать requestAnimationFrame для плавности
       let last = 0;
       function loop(ts) {
         if (!last) last = ts;
-        const dt = ts - last;
-        if (dt > 33) { draw(); last = ts; }
+        if (ts - last > 40) { draw(); last = ts; }
         requestAnimationFrame(loop);
       }
       requestAnimationFrame(loop);
     }
   </script>
-
 </body>
 </html>
