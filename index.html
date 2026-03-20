@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SADDROP1220 // SECURE_SHELL</title>
-    <link rel="stylesheet" href="style.css?v=1.6">
+    <link rel="stylesheet" href="style.css?v=1.7">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
@@ -25,13 +25,27 @@
     </div>
 
     <div id="main-content" class="interface-grid" style="display: none;">
-        <div class="cyber-header">
-    <div class="uplink-status">
-        <div class="pulse-dot"></div>
-        <span>SECURE UPLINK ESTABLISHED // <span class="text-dim">NODE_99</span></span>
-    </div>
-    <div class="cyber-barcode"></div>
-</div>
+        
+        <header class="system-header">
+            <div class="status-node">
+                <div class="pulse-dot"></div>
+                <span>UPLINK: <span style="color: #fff;">ESTABLISHED</span></span>
+            </div>
+            
+            <div class="status-node">
+                <span class="text-dim">SYS_LOAD:</span>
+                <span id="cpu-val">24</span>% / 
+                <span id="ram-val">58</span>%
+            </div>
+
+            <div class="status-node">
+                <span class="text-dim">NODE:</span> 0x99_ALPHA
+            </div>
+
+            <div class="cyber-barcode"></div>
+            
+            <div id="cpu-bar" style="display:none"></div>
+            <div id="ram-bar" style="display:none"></div>
         </header>
 
         <main class="terminal-main">
@@ -72,9 +86,15 @@
                 <h2 onclick="toggleBlock(this)"><span>// FILE_SYSTEM</span> <span class="state">[ + ]</span></h2>
                 <div class="inner-content">
                     <div class="file-list">
-                        <div class="file-row head"><span>RIGHTS</span><span>SIZE</span><span>NAME</span></div>
-                        <div class="file-row"><span>rwx-r--</span><span>4.2k</span><span class="f-name"><a href="#">CHUPA_BOT</a></span></div>
-                        <div class="file-row"><span>r--r--r</span><span>12kb</span><span class="f-name"><a href="#">CORE_ALPHA</a></span></div>
+                        <div class="file-row head" style="display: flex; justify-content: space-between; opacity: 0.5; font-size: 0.7rem; margin-bottom: 10px;">
+                            <span>RIGHTS</span><span>SIZE</span><span>NAME</span>
+                        </div>
+                        <div class="file-row" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>rwx-r--</span><span>4.2k</span><span class="f-name"><a href="#" style="color: var(--neon); text-decoration: none;">CHUPA_BOT</a></span>
+                        </div>
+                        <div class="file-row" style="display: flex; justify-content: space-between;">
+                            <span>r--r--r</span><span>12kb</span><span class="f-name"><a href="#" style="color: var(--neon); text-decoration: none;">CORE_ALPHA</a></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,6 +102,7 @@
     </div>
 
     <script>
+        // Логика загрузки (Boot)
         const logs = [
             "[ OK ] Kernel Loaded", 
             "[ OK ] Env Sync Complete", 
@@ -94,7 +115,8 @@
         function showLogs() {
             if (logIndex < logs.length) {
                 const p = document.createElement('p');
-                p.innerHTML = logs[logIndex].replace("[ OK ]", "<span style='color:var(--neon);'>[ OK ]</span>");
+                p.style.margin = "5px 0";
+                p.innerHTML = logs[logIndex].replace("[ OK ]", "<span style='color:var(--neon); font-weight:bold;'>[ OK ]</span>");
                 document.getElementById('boot-logs').appendChild(p);
                 logIndex++;
                 setTimeout(showLogs, 150);
@@ -106,6 +128,7 @@
         }
         window.onload = showLogs;
 
+        // Обработка ввода (кнопки)
         function handleInput(key) {
             document.getElementById('user-input').innerText = key;
             if (key === 'y') setTimeout(grantAccess, 400);
@@ -115,11 +138,13 @@
             }
         }
 
+        // Обработка клавиатуры
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (key === 'y' || key === 'n') handleInput(key);
         });
 
+        // Вход в систему
         function grantAccess() {
             document.getElementById('auth-terminal').style.display = 'none';
             document.getElementById('main-content').style.display = 'grid';
@@ -128,6 +153,7 @@
             updateStats();
         }
 
+        // Раскрытие блоков
         function toggleBlock(header) {
             const block = header.parentElement;
             const state = header.querySelector('.state');
@@ -135,22 +161,29 @@
             state.innerText = block.classList.contains('collapsed') ? '[ + ]' : '[ - ]';
         }
 
+        // Динамическое обновление цифр (для жизни интерфейса)
         function updateStats() {
             setInterval(() => {
                 const cpu = Math.floor(Math.random() * 30 + 10);
                 const ram = Math.floor(Math.random() * 10 + 40);
                 document.getElementById('cpu-val').innerText = cpu;
-                document.getElementById('cpu-bar').style.width = cpu + "%";
                 document.getElementById('ram-val').innerText = ram;
-                document.getElementById('ram-bar').style.width = ram + "%";
+                
+                // Элементы-заглушки, чтобы не было ошибок в консоли
+                const cpuBar = document.getElementById('cpu-bar');
+                const ramBar = document.getElementById('ram-bar');
+                if(cpuBar) cpuBar.style.width = cpu + "%";
+                if(ramBar) ramBar.style.width = ram + "%";
             }, 1500);
         }
 
+        // Матрица (эффект дождя)
         function startMatrix() {
             const canvas = document.getElementById('matrix');
-            const ctx = canvas.width ? canvas.getContext('2d') : null;
-            if(!ctx) return;
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight;
+            
             const drops = Array(Math.floor(canvas.width/16)).fill(1);
             function draw() {
                 ctx.fillStyle = "rgba(2, 2, 5, 0.15)"; 
@@ -158,7 +191,8 @@
                 ctx.fillStyle = "#00ff41"; 
                 ctx.font = "14px monospace";
                 drops.forEach((y, i) => {
-                    ctx.fillText(String.fromCharCode(Math.random()*128), i*16, y*16);
+                    const text = String.fromCharCode(Math.random()*128);
+                    ctx.fillText(text, i*16, y*16);
                     if (y*16 > canvas.height && Math.random() > 0.98) drops[i] = 0;
                     drops[i]++;
                 });
