@@ -10,52 +10,56 @@
   --card-border: rgba(0, 255, 65, 0.4);
 }
 
-/* ГЛОБАЛЬНЫЕ СТИЛИ */
+/* Кастомный скроллбар (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(8, 12, 26, 0.6);
+  border-left: 1px solid rgba(0, 255, 65, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--neon-glow);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+  box-shadow: 0 0 15px #fff;
+}
+
 * {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-shadow: 0 0 8px var(--neon-glow), 0 0 12px rgba(0,255,65,.2);
+  /* Кастомный скроллбар (Firefox) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon) rgba(8, 12, 26, 0.6);
 }
 
-/* СКРОЛЛЫ: кастомный стиль для всей страницы и внутренних элементов */
 html, body {
   height: 100%;
   margin: 0;
   background: var(--bg-dark);
   font-family: "Consolas", "Monaco", monospace;
   color: #eafff2;
-  overflow: auto;
-  overscroll-behavior: none; /* отключаем pull-to-refresh на мобилке, чтобы не мешалось */
+  overflow: hidden; /* Оставляем скрытым, чтобы не было системного скролла страницы */
 }
 
-/* Кастомный скролл для всей страницы (Firefox) */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--neon) transparent;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-image:
+    linear-gradient(rgba(0,255,65,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,.05) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-/* Chrome / Edge / Safari кастомный скролл */
-*::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-*::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--neon), #39ff9e);
-  border-radius: 8px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  box-shadow: 0 0 12px var(--neon);
-}
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-*::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #89ffb2, #00ff6a);
-  box-shadow: 0 0 14px var(--neon);
-}
-
-/* ФОН и сетка под мониторы */
+/* Матрица фон */
 #matrix {
   position: fixed;
   top: 0; left: 0;
@@ -111,7 +115,14 @@ html, body {
 
 .auth-stage { padding-top: 6px; border-top: 2px dashed rgba(0,255,65,.3); margin-top: 14px; }
 
-/* элементы ввода/кнопки */
+.prompt { font-weight: bold; color: #c9ffd6; }
+.muted { color: var(--text-dim); }
+.warning { color: var(--warning-red); font-weight: bold; margin: 6px 0 0; }
+.highlight { color: #fff; text-shadow: 0 0 8px #fff; }
+.blink { animation: blink 0.8s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* кнопки */
 .mobile-keys {
   display: flex; gap: 14px; margin-top: 8px;
 }
@@ -143,7 +154,6 @@ html, body {
   position: relative;
   border-radius: 8px;
   padding: 6px;
-  overflow: auto;
 }
 
 /* Шапка мониторинга */
@@ -175,7 +185,8 @@ html, body {
   border: 1px solid rgba(0,255,65,.4);
   border-top: 5px solid var(--neon);
   padding: 18px;
-  overflow: auto;
+  overflow: auto; /* Именно этот блок берет на себя скролл */
+  -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
   box-shadow: 0 0 28px rgba(0,0,0,.8);
   border-radius: 8px;
 }
@@ -205,11 +216,10 @@ html, body {
 /* Селектор для состояния блока */
 .state { font-weight: bold; }
 
-/* Адаптивность и прокрутка внутри секций на мобилке */
-@media (max-width: 640px) {
-  .terminal-main { max-height: 60vh; overflow: auto; }
-  .inner-content { max-height: 48vh; overflow: auto; }
-  .history-log { max-height: 34vh; overflow: auto; }
+/* Адаптивность */
+@media (max-width: 900px) {
   .system-header { flex-wrap: wrap; gap: 8px; }
   .mini-bar { width: 150px; }
+  /* Задаем жесткие рамки экрана, чтобы заработал внутренний скролл */
+  .interface-grid { height: 96vh; max-height: 96vh; }
 }
