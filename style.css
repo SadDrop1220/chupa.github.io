@@ -10,6 +10,7 @@
   --card-border: rgba(0, 255, 65, 0.4);
 }
 
+/* ГЛОБАЛЬНЫЕ СТИЛИ */
 * {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
@@ -17,27 +18,44 @@
   text-shadow: 0 0 8px var(--neon-glow), 0 0 12px rgba(0,255,65,.2);
 }
 
+/* СКРОЛЛЫ: кастомный стиль для всей страницы и внутренних элементов */
 html, body {
   height: 100%;
   margin: 0;
   background: var(--bg-dark);
   font-family: "Consolas", "Monaco", monospace;
   color: #eafff2;
-  overflow: hidden;
+  overflow: auto;
+  overscroll-behavior: none; /* отключаем pull-to-refresh на мобилке, чтобы не мешалось */
 }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  background-image:
-    linear-gradient(rgba(0,255,65,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,65,.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* Кастомный скролл для всей страницы (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon) transparent;
 }
 
-/* Матрица фон */
+/* Chrome / Edge / Safari кастомный скролл */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--neon), #39ff9e);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 0 12px var(--neon);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #89ffb2, #00ff6a);
+  box-shadow: 0 0 14px var(--neon);
+}
+
+/* ФОН и сетка под мониторы */
 #matrix {
   position: fixed;
   top: 0; left: 0;
@@ -93,14 +111,7 @@ body {
 
 .auth-stage { padding-top: 6px; border-top: 2px dashed rgba(0,255,65,.3); margin-top: 14px; }
 
-.prompt { font-weight: bold; color: #c9ffd6; }
-.muted { color: var(--text-dim); }
-.warning { color: var(--warning-red); font-weight: bold; margin: 6px 0 0; }
-.highlight { color: #fff; text-shadow: 0 0 8px #fff; }
-.blink { animation: blink 0.8s infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-
-/* кнопки */
+/* элементы ввода/кнопки */
 .mobile-keys {
   display: flex; gap: 14px; margin-top: 8px;
 }
@@ -132,6 +143,7 @@ body {
   position: relative;
   border-radius: 8px;
   padding: 6px;
+  overflow: auto;
 }
 
 /* Шапка мониторинга */
@@ -193,9 +205,11 @@ body {
 /* Селектор для состояния блока */
 .state { font-weight: bold; }
 
-/* Адаптивность */
-@media (max-width: 900px) {
+/* Адаптивность и прокрутка внутри секций на мобилке */
+@media (max-width: 640px) {
+  .terminal-main { max-height: 60vh; overflow: auto; }
+  .inner-content { max-height: 48vh; overflow: auto; }
+  .history-log { max-height: 34vh; overflow: auto; }
   .system-header { flex-wrap: wrap; gap: 8px; }
   .mini-bar { width: 150px; }
-  .interface-grid { height: auto; max-height: none; }
 }
