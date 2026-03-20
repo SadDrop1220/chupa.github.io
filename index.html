@@ -8,15 +8,13 @@
 </head>
 <body class="booting">
 
-  <!-- Фон матрицы и скан-линии -->
   <canvas id="matrix" aria-label="Матрица" role="img"></canvas>
   <div class="scanline" aria-hidden="true"></div>
 
-  <!-- Экран загрузки / авторизации -->
   <section id="boot-screen" class="boot-frame" aria-label="Загрузка">
     <div id="boot-logs" class="logs" style="font-family: monospace;"></div>
 
-    <div id="auth-flash" class="auth-stage" style="margin-top: 14px;">
+    <div id="auth-flash" class="auth-stage" style="margin-top: 14px; display: none;">
       <p class="muted" style="margin:0 0 6px;">
         <span class="prompt">SADDROP1220@SYSTEM:~#</span> run authorization_core
       </p>
@@ -35,10 +33,8 @@
     </div>
   </section>
 
-  <!-- Основной интерфейс (свернут по умолчанию) -->
   <section id="main-interface" class="interface-grid" style="display: none;" aria-label="Главный интерфейс">
 
-    <!-- Шапка мониторинга -->
     <header class="system-header" aria-label="Статусы системы">
       <div class="status-node">
         <span class="pulse-dot" aria-hidden="true"></span>
@@ -64,7 +60,6 @@
       </div>
     </header>
 
-    <!-- Главный контент: консоль/текстовые блоки -->
     <main class="terminal-main" role="main" aria-label="Терминал">
 
       <article class="block collapsed" id="block-bio" aria-label="Биография пользователя">
@@ -147,21 +142,27 @@
         p.style.margin = "4px 0";
         document.getElementById('boot-logs').appendChild(p);
         line++;
-        // Замедлить тиковый вывод чуть, чтобы не выглядело как мгновенно
         setTimeout(printLogs, 120);
       } else {
-        // Загрузились — скрываем анимацию и показываем кнопку/интерактив
-        // Но не разворачиваем сразу основной интерфейс
-        // Здесь можно оставить как есть: интерфейс открыт только после y
-        // Но даем пользователю подсказку
+        // ЛОГИ ОКОНЧЕНЫ. Ждем 2 секунды (2000 мс) и показываем блок авторизации
+        setTimeout(() => {
+          const authBlock = document.getElementById('auth-flash');
+          authBlock.style.display = 'block';
+          
+          // Плавное появление
+          authBlock.style.opacity = '0';
+          authBlock.style.transition = 'opacity 0.4s ease-in';
+          
+          // Небольшая задержка перед изменением opacity, чтобы браузер успел применить display: block
+          setTimeout(() => {
+            authBlock.style.opacity = '1';
+          }, 50);
+        }, 2000); 
       }
     }
 
     window.addEventListener('load', () => {
-      // Тестовый таймер запуска логов на boot-screen
       printLogs();
-      // Быстро корректируем статус: не показывать бесконечный Waiting for credentials
-      // Активируем ввод без задержки (через задержку ниже после нажатия)
     });
 
     // 2) Ввод / авторизация
@@ -183,15 +184,13 @@
       }
     }
 
-    // Чтобы старт был без задержки, добавим автоматическое предзаполнение y через 1 сек после загрузки, если пользователь не нажал
-    window.addEventListener('load', () => {
-      // Комментарий: можно отключить автозапуск, если нужно пользователю самим нажать
-      // Но оставим только нажатие. Чтобы не было автоклика, не вызываем автозапуск здесь.
-    });
-
     document.addEventListener('keydown', (e) => {
       const k = e.key.toLowerCase();
-      if (k === 'y' || k === 'n') handleInput(k);
+      // Ограничиваем ввод только если блок авторизации уже показан
+      const authBlock = document.getElementById('auth-flash');
+      if (authBlock.style.display === 'block' && (k === 'y' || k === 'n')) {
+        handleInput(k);
+      }
     });
 
     // 3) Сворачивание
