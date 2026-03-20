@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SADDROP1220 // SECURE_SHELL</title>
-    <link rel="stylesheet" href="style.css?v=2.0">
+    <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body class="off">
     <canvas id="matrix"></canvas>
     <div class="scanline"></div>
 
     <div id="auth-terminal" class="boot-frame">
-        <div id="boot-logs"></div>
+        <div id="boot-logs" style="font-size: 0.9rem; line-height: 1.4;"></div>
         
-        <div id="access-request" style="display: none; margin-top: 20px; border-top: 1px dashed var(--neon); padding-top: 15px;">
-            <p style="color: #fff;">SADDROP1220@SYSTEM:~# run authorization_core</p>
-            <p style="color: var(--warning-red); font-weight: bold;">! ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY !</p>
-            <p>INITIALIZE INTERFACE? (y/n): <span id="user-input"></span><span class="blink" style="border-left: 8px solid var(--neon); margin-left: 5px; animation: blink 1s step-end infinite;">_</span></p>
+        <div id="access-request" style="display: none; margin-top: 25px; border-top: 2px dashed var(--neon); padding-top: 20px;">
+            <p style="color: #fff; margin-bottom: 5px;">SADDROP1220@SYSTEM:~# run authorization_core</p>
+            <p style="color: var(--warning-red); font-weight: bold; letter-spacing: 1px;">
+                [!] WARNING: ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY [!]
+            </p>
+            <p style="margin-top: 15px;">INITIALIZE INTERFACE? (y/n): <span id="user-input" class="highlight"></span><span class="blink" style="border-left: 10px solid var(--neon); margin-left: 5px;">&nbsp;</span></p>
             <div class="mobile-keys">
                 <button onclick="handleInput('y')">PROCEED</button>
                 <button onclick="handleInput('n')">ABORT</button>
@@ -25,58 +27,82 @@
     </div>
 
     <div id="main-content" class="interface-grid" style="display: none;">
+        
         <header class="system-header">
             <div class="status-node">
                 <div class="pulse-dot"></div>
-                <span>UPLINK: <span style="color: #fff;">SECURE</span></span>
+                <span>UPLINK: <span class="highlight">ACTIVE_ENCRYPTED</span></span>
             </div>
+            
             <div class="status-node">
-                <span style="color: var(--text-dim);">LOAD:</span>
-                <span id="cpu-val">--</span>% CPU / <span id="ram-val">--</span>% RAM
+                <span>NODE_ID: <span class="highlight">0x99_ALPHA</span></span>
             </div>
-            <div class="cyber-barcode"></div>
+
+            <div class="status-node">
+                <span>CPU: <span id="cpu-val" class="highlight">--</span>%</span>
+                <div class="mini-bar"><div id="cpu-bar" class="mini-bar-fill" style="width: 0%"></div></div>
+            </div>
+
+            <div class="status-node">
+                <span>RAM: <span id="ram-val" class="highlight">--</span>%</span>
+                <div class="mini-bar"><div id="ram-bar" class="mini-bar-fill" style="width: 0%"></div></div>
+            </div>
         </header>
 
         <main class="terminal-main">
-            <div class="block collapsed" id="block-bio">
+            <div class="block" id="block-bio">
                 <h2 onclick="toggleBlock('block-bio')">
-                    <span>// USER_BIO</span>
-                    <span class="state">[ + ]</span>
+                    <span>// USER_BIO_EXTRACT</span>
+                    <span class="state">[ - ]</span>
                 </h2>
                 <div class="inner-content">
-                    <p style="color: var(--neon); font-weight: bold;">> Fullstack Developer & Security Researcher</p>
-                    <p style="color: var(--text-dim); line-height: 1.6;">
-                        Строю защищенные цифровые экосистемы, используя опыт в системном программировании. 
-                        Владею стеком <span style="color: #fff;">C#, Java, Python, Node.js</span>. 
+                    <p style="color: var(--neon); font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                        > Fullstack Developer & Security Researcher
+                    </p>
+                    <p style="color: var(--text-dim); line-height: 1.8;">
+                        Строю защищенные цифровые экосистемы, используя опыт в системном программировании и наступательной безопасности. 
+                        Владею стеком <span class="highlight">C#, Java, Python, Node.js</span>. Глубоко работаю с <span class="highlight">Linux</span> и <span class="highlight">PostgreSQL</span>. 
                         Проектирую системы с учетом векторов атак, применяя навыки <span style="color: var(--neon);">Ethical Hacking</span>.
+                    </p>
+                    <p style="font-style: italic; color: var(--neon); opacity: 0.7; border-top: 1px solid rgba(0, 255, 65, 0.2); margin-top: 20px; padding-top: 10px;">
+                        «Код должен быть либо элегантным, либо зашифрованным. Я предпочитаю и то, и другое».
                     </p>
                 </div>
             </div>
 
-            <div class="block collapsed" id="block-history">
+            <div class="block" id="block-history">
                 <h2 onclick="toggleBlock('block-history')">
-                    <span>// EVENT_HISTORY</span>
-                    <span class="state">[ + ]</span>
+                    <span>// MISSION_LOGS</span>
+                    <span class="state">[ - ]</span>
                 </h2>
                 <div class="inner-content history-log">
-                    <p><span>[2017]</span> Начал путь с изучения Python.</p>
-                    <p><span>[2021]</span> Fullstack: Node.js, React и PostgreSQL.</p>
+                    <p><span>[2017]</span> Начал путь с изучения Python. Базовые алгоритмы.</p>
+                    <p><span>[2018]</span> Глубокое освоение Python-библиотек. Первые скрипты автоматизации.</p>
+                    <p><span>[2020]</span> Запуск бизнес-проекта: игровой сервер Minecraft. Администрирование и БД.</p>
+                    <p><span>[2021]</span> Переход в Fullstack: Node.js, React и PostgreSQL.</p>
+                    <p><span>[2022]</span> Масштабный проект Rust. Статистика: 130 активных игроков.</p>
+                    <p><span>[2023]</span> Анализ архитектурных ошибок игровых серверов. DevSecOps mindset.</p>
+                    <p><span>[2023]</span> Разработка фан-игры на GameMaker Language.</p>
                     <p><span>[2024]</span> Начало профессионального обучения по специальности ИСП.</p>
-                    <p style="color: var(--neon);"><span>[2026]</span> Active phase...<span class="blink">_</span></p>
+                    <p><span>[2025]</span> VR/AR (Varwin), ИТ-съезд в СПб, переход в Ethical Hacking.</p>
+                    <p style="color: var(--neon);"><span>[2026]</span> Участие в мероприятиях ИСП колледжа. ACTIVE_PHASE...<span class="blink">_</span></p>
                 </div>
             </div>
 
             <div class="block collapsed" id="block-files">
                 <h2 onclick="toggleBlock('block-files')">
-                    <span>// FILE_SYSTEM</span>
+                    <span>// REPOSITORY_ACCESS</span>
                     <span class="state">[ + ]</span>
                 </h2>
                 <div class="inner-content">
-                    <div style="display: flex; justify-content: space-between; opacity: 0.5; font-size: 0.8rem; margin-bottom: 10px;">
-                        <span>PERMISSIONS</span><span>SIZE</span><span>NAME</span>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,65,0.3); padding-bottom: 5px; margin-bottom: 10px; font-size: 0.8rem;">
+                        <span>PERMS</span><span>SIZE</span><span>OBJECT_NAME</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="opacity: 0.6;">rwx-r--</span><span>4.2k</span><a href="#" style="color: var(--neon); font-weight: bold;">CHUPA_BOT.core</a>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
-                        <span>rwx-r--</span><span>4.2k</span><a href="#" style="color: var(--neon);">CHUPA_BOT</a>
+                        <span style="opacity: 0.6;">r--r--r</span><span>12kb</span><a href="#" style="color: var(--neon); font-weight: bold;">CORE_ALPHA.sys</a>
                     </div>
                 </div>
             </div>
@@ -84,30 +110,32 @@
     </div>
 
     <script>
-        // ЛОГИ ЗАГРУЗКИ
-        const logs = [
-            "[ OK ] Kernel Loaded", 
-            "[ OK ] IP: 85.12.44.1 established", 
-            "[ OK ] Encryption keys synchronized",
-            "Ready for authorization..."
+        // ИНИЦИАЛИЗАЦИЯ ЛОГОВ
+        const bootData = [
+            "[ OK ] BIOS Checksum valid",
+            "[ OK ] Initializing Secure Kernel...",
+            "[ OK ] IP Address: 85.12.44.1 (Static)",
+            "[ OK ] Neural interface linked",
+            "[ OK ] Firewall: Level 7 Active",
+            "Waiting for credentials..."
         ];
-        let logIdx = 0;
+        let line = 0;
 
-        function showLogs() {
-            if (logIdx < logs.length) {
+        function printLogs() {
+            if (line < bootData.length) {
                 const p = document.createElement('p');
-                p.innerHTML = logs[logIdx].replace("[ OK ]", "<span style='color:var(--neon)'>[ OK ]</span>");
-                p.style.margin = "5px 0";
+                p.innerHTML = bootData[line].replace("[ OK ]", "<span style='color:var(--neon); font-weight:bold;'>[ OK ]</span>");
+                p.style.margin = "4px 0";
                 document.getElementById('boot-logs').appendChild(p);
-                logIdx++;
-                setTimeout(showLogs, 150);
+                line++;
+                setTimeout(printLogs, 120);
             } else {
-                setTimeout(() => document.getElementById('access-request').style.display = 'block', 500);
+                setTimeout(() => document.getElementById('access-request').style.display = 'block', 400);
             }
         }
-        window.onload = showLogs;
+        window.onload = printLogs;
 
-        // ВВОД
+        // ЛОГИКА АВТОРИЗАЦИИ
         function handleInput(key) {
             document.getElementById('user-input').innerText = key;
             if (key === 'y') {
@@ -116,10 +144,10 @@
                     document.getElementById('main-content').style.display = 'flex';
                     startMatrix();
                     updateStats();
-                }, 400);
+                }, 300);
             } else if (key === 'n') {
                 document.body.classList.add('tv-off');
-                setTimeout(() => window.location.href = "about:blank", 800);
+                setTimeout(() => window.location.href = "about:blank", 600);
             }
         }
 
@@ -128,39 +156,54 @@
             if (k === 'y' || k === 'n') handleInput(k);
         });
 
-        // СВОРАЧИВАНИЕ БЛОКОВ (ИСПРАВЛЕНО)
+        // СВОРАЧИВАНИЕ (РАБОТАЕТ ЧЕТКО)
         function toggleBlock(id) {
-            const block = document.getElementById(id);
-            const state = block.querySelector('.state');
-            const isCollapsed = block.classList.toggle('collapsed');
+            const el = document.getElementById(id);
+            const state = el.querySelector('.state');
+            const isCollapsed = el.classList.toggle('collapsed');
             state.innerText = isCollapsed ? '[ + ]' : '[ - ]';
         }
 
-        // СТАТИСТИКА
+        // МОНИТОРИНГ СИСТЕМЫ
         function updateStats() {
             setInterval(() => {
-                document.getElementById('cpu-val').innerText = Math.floor(Math.random() * 20 + 10);
-                document.getElementById('ram-val').innerText = Math.floor(Math.random() * 5 + 45);
-            }, 2000);
+                const cpu = Math.floor(Math.random() * 25 + 15);
+                const ram = Math.floor(Math.random() * 10 + 50);
+                document.getElementById('cpu-val').innerText = cpu;
+                document.getElementById('ram-val').innerText = ram;
+                document.getElementById('cpu-bar').style.width = cpu + "%";
+                document.getElementById('ram-bar').style.width = ram + "%";
+            }, 1500);
         }
 
-        // МАТРИЦА
+        // ЯРКАЯ МАТРИЦА
         function startMatrix() {
             const canvas = document.getElementById('matrix');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            const drops = Array(Math.floor(canvas.width/16)).fill(1);
+            
+            const chars = "01010101ABCDEFHIJKLMNOPQRSTUVWXYZｦｱｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ";
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+
             function draw() {
-                ctx.fillStyle = "rgba(2, 2, 5, 0.1)";
-                ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = "rgba(2, 2, 5, 0.15)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
                 ctx.fillStyle = "#00ff41";
-                ctx.font = "14px monospace";
-                drops.forEach((y, i) => {
-                    ctx.fillText(String.fromCharCode(Math.random()*128), i*16, y*16);
-                    if (y*16 > canvas.height && Math.random() > 0.98) drops[i] = 0;
+                ctx.font = fontSize + "px monospace";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
                     drops[i]++;
-                });
+                }
             }
             setInterval(draw, 33);
         }
