@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SADDROP1220 // SECURE_SHELL — HYPERHACK INTERFACE</title>
-  <link rel="stylesheet" href="style.css?v=3.1">
+  <link rel="stylesheet" href="style.css?v=3.2">
 </head>
 <body class="booting">
 
@@ -15,26 +15,27 @@
   <!-- Экран загрузки / авторизации -->
   <section id="boot-screen" class="boot-frame" aria-label="Загрузка">
     <div id="boot-logs" class="logs" style="font-family: monospace;"></div>
-    <div id="auth-flash" class="auth-stage" style="margin-top: 18px;">
-      <p class="muted">
+
+    <div id="auth-flash" class="auth-stage" style="margin-top: 14px;">
+      <p class="muted" style="margin:0 0 6px;">
         <span class="prompt">SADDROP1220@SYSTEM:~#</span> run authorization_core
       </p>
-      <p class="warning" aria-live="polite">
+      <p class="warning" aria-live="polite" style="margin:6px 0 12px;">
         [!] WARNING: ACCESS RESTRICTED TO AUTHORIZED PERSONNEL ONLY [!]
       </p>
-      <p class="muted" style="margin-top: 6px;">
+      <p class="muted" style="margin:0;">
         INITIALIZE INTERFACE? (y/n):
         <span id="user-input" class="highlight" aria-label="ввод пользователя"></span>
-        <span class="blink" style="border-left: 6px solid var(--neon); margin-left: 8px; display:inline-block;"></span>
+        <span class="blink" style="border-left: 6px solid var(--neon); margin-left: 8px; display:inline-block; width: 8px;"></span>
       </p>
-      <div class="mobile-keys" role="group" aria-label="Клавиатура запуска">
+      <div class="mobile-keys" role="group" aria-label="Клавиатура запуска" style="margin-top: 8px;">
         <button onclick="handleInput('y')">PROCEED</button>
         <button onclick="handleInput('n')">ABORT</button>
       </div>
     </div>
   </section>
 
-  <!-- Основной интерфейс -->
+  <!-- Основной интерфейс (свернут по умолчанию) -->
   <section id="main-interface" class="interface-grid" style="display: none;" aria-label="Главный интерфейс">
 
     <!-- Шапка мониторинга -->
@@ -51,25 +52,25 @@
       <div class="status-node cpu-ram">
         <span>CPU: <span id="cpu-val" class="highlight">--</span>%</span>
         <div class="mini-bar" aria-label="CPU загрузка" role="meter">
-          <div id="cpu-bar" class="mini-bar-fill" style="width:0%"></div>
+          <div id="cpu-bar" class="mini-bar-fill" style="width: 0%"></div>
         </div>
       </div>
 
       <div class="status-node cpu-ram">
         <span>RAM: <span id="ram-val" class="highlight">--</span>%</span>
         <div class="mini-bar" aria-label="RAM загрузка" role="meter">
-          <div id="ram-bar" class="mini-bar-fill" style="width:0%"></div>
+          <div id="ram-bar" class="mini-bar-fill" style="width: 0%"></div>
         </div>
       </div>
     </header>
 
     <!-- Главный контент: консоль/текстовые блоки -->
-    <main class="terminal-main" role="main">
+    <main class="terminal-main" role="main" aria-label="Терминал">
 
-      <article class="block" id="block-bio">
+      <article class="block collapsed" id="block-bio" aria-label="Биография пользователя">
         <h2 onclick="toggleBlock('block-bio')">
           <span>// USER_BIO_EXTRACT</span>
-          <span class="state">[ - ]</span>
+          <span class="state">[ + ]</span>
         </h2>
         <div class="inner-content">
           <p class="brand" style="color: var(--neon); font-weight: bold; font-size: 1.05rem; margin-bottom: 8px;">
@@ -87,12 +88,12 @@
         </div>
       </article>
 
-      <article class="block" id="block-history">
+      <article class="block collapsed" id="block-history" aria-label="История проектов">
         <h2 onclick="toggleBlock('block-history')">
           <span>// MISSION_LOGS</span>
-          <span class="state">[ - ]</span>
+          <span class="state">[ + ]</span>
         </h2>
-        <div class="inner-content history-log">
+        <div class="inner-content history-log" style="max-height: 260px; overflow:auto;">
           <p><span>[2017]</span> Начал путь с изучения Python. Базовые алгоритмы.</p>
           <p><span>[2018]</span> Глубокое освоение Python-библиотек. Автоматизация.</p>
           <p><span>[2020]</span> Запуск проекта: игровой сервер Minecraft. Админка и БД.</p>
@@ -105,16 +106,16 @@
         </div>
       </article>
 
-      <article class="block collapsed" id="block-files">
+      <article class="block collapsed" id="block-files" aria-label="Файлы репозитория">
         <h2 onclick="toggleBlock('block-files')">
           <span>// REPOSITORY_ACCESS</span>
           <span class="state">[ + ]</span>
         </h2>
         <div class="inner-content">
-          <div class="table-row" style="display:flex; justify-content: space-between; border-bottom:1px solid rgba(0,255,65,.3); padding-bottom:6px; font-size:.85rem;">
+          <div class="table-row" style="display:flex; justify-content: space-between; border-bottom:1px solid rgba(0,255,65,.3); padding-bottom:6px; margin-bottom:6px; font-size:.85rem;">
             <span>PERMS</span><span>SIZE</span><span>OBJECT_NAME</span>
           </div>
-          <div class="table-row" style="display:flex; justify-content: space-between; margin:8px 0;">
+          <div class="table-row" style="display:flex; justify-content: space-between; margin:6px 0;">
             <span style="opacity:.75;">rwx-r--</span><span>4.2k</span><a href="#" style="color: var(--neon); font-weight: bold;">CHUPA_BOT.core</a>
           </div>
           <div class="table-row" style="display:flex; justify-content: space-between;">
@@ -146,33 +147,47 @@
         p.style.margin = "4px 0";
         document.getElementById('boot-logs').appendChild(p);
         line++;
+        // Замедлить тиковый вывод чуть, чтобы не выглядело как мгновенно
         setTimeout(printLogs, 120);
       } else {
-        setTimeout(() => document.getElementById('auth-flash').style.display = 'none', 400);
+        // Загрузились — скрываем анимацию и показываем кнопку/интерактив
+        // Но не разворачиваем сразу основной интерфейс
+        // Здесь можно оставить как есть: интерфейс открыт только после y
+        // Но даем пользователю подсказку
       }
     }
 
     window.addEventListener('load', () => {
-      // Таймер запуска логов на boot-screen
+      // Тестовый таймер запуска логов на boot-screen
       printLogs();
+      // Быстро корректируем статус: не показывать бесконечный Waiting for credentials
+      // Активируем ввод без задержки (через задержку ниже после нажатия)
     });
 
     // 2) Ввод / авторизация
     function handleInput(key) {
       document.getElementById('user-input').innerText = key;
+      // При нажатии Y — переход к основному интерфейсу сразу после небольшого таймаута
       if (key === 'y') {
+        // Убрать boot-screen -> показать main-interface
         setTimeout(() => {
           document.getElementById('boot-screen').style.display = 'none';
-          document.getElementById('main-interface').style.display = 'block';
+          document.getElementById('main-interface').style.display = 'flex';
+          // запустить матрицу и статистику
           startMatrix();
           updateStats();
-        }, 300);
+        }, 150);
       } else if (key === 'n') {
-        document.body.style.transition = "opacity .5s ease";
-        document.body.style.opacity = 0;
-        setTimeout(() => window.location.href = "about:blank", 300);
+        document.body.classList.add('tv-off');
+        setTimeout(() => window.location.href = "about:blank", 600);
       }
     }
+
+    // Чтобы старт был без задержки, добавим автоматическое предзаполнение y через 1 сек после загрузки, если пользователь не нажал
+    window.addEventListener('load', () => {
+      // Комментарий: можно отключить автозапуск, если нужно пользователю самим нажать
+      // Но оставим только нажатие. Чтобы не было автоклика, не вызываем автозапуск здесь.
+    });
 
     document.addEventListener('keydown', (e) => {
       const k = e.key.toLowerCase();
@@ -232,10 +247,17 @@
           drops[i]++;
         }
       }
-      setInterval(draw, 33);
+      // использовать requestAnimationFrame для плавности
+      let last = 0;
+      function loop(ts) {
+        if (!last) last = ts;
+        const dt = ts - last;
+        if (dt > 33) { draw(); last = ts; }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
     }
   </script>
 
-  <!-- Общие стили здесь же (подключены style.css) -->
 </body>
 </html>
