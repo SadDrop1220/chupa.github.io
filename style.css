@@ -1,108 +1,104 @@
 :root {
   --neon: #00ff41;
   --neon-glow: rgba(0, 255, 65, 0.6);
-  --bg-dark: #0a0a0f;
-  --panel-bg: rgba(8, 12, 26, 0.8); 
+  --bg-dark: #050508;
+  --panel-bg: rgba(8, 12, 26, 0.85); 
   --accent-blue: #00a2ff;
   --blue-glow: rgba(0, 170, 255, 0.5);
   --warning-red: #ff3e3e;
   --red-glow: rgba(255, 62, 62, 0.6);
   --text-dim: #a0a0a0;
-  --card-border: rgba(0, 255, 65, 0.4);
+  --card-border: rgba(0, 255, 65, 0.3);
+  --panel-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
 }
 
-/* --- СКРОЛЛБАР --- */
+/* Кастомный скроллбар */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(8, 12, 26, 0.6);
-  border-left: 1px solid rgba(0, 255, 65, 0.1);
+  background: rgba(8, 12, 26, 0.4);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--neon);
-  border-radius: 4px;
+  border-radius: 10px;
   box-shadow: 0 0 10px var(--neon-glow);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-  box-shadow: 0 0 15px #fff;
 }
 
 * {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   scrollbar-width: thin;
-  scrollbar-color: var(--neon) rgba(8, 12, 26, 0.6);
+  scrollbar-color: var(--neon) transparent;
 }
 
 html, body {
   height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
   background: var(--bg-dark);
-  font-family: "Consolas", "Monaco", monospace;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
   color: #eafff2;
-  overflow: hidden;
+  overflow: hidden; /* Важно для фиксации фона */
 }
 
-/* --- ФОНОВАЯ СЕТКА (КЛЕТОЧКИ) --- */
+/* Общий фон: Сетка + Матрица */
 body {
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  background-image:
-    linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
-  background-size: 40px 40px;
+  /* Сетка теперь — константа фона */
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.08) 1px, transparent 1px);
+  background-size: clamp(20px, 5vw, 40px) clamp(20px, 5vw, 40px);
   background-attachment: fixed;
-  text-shadow: 0 0 5px rgba(0, 255, 65, 0.2); 
 }
 
-/* --- МАТРИЦА --- */
+/* Эффект виньетки для глубины */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
 #matrix {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0.6;
-  filter: brightness(1.15) contrast(1.15);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  opacity: 0.4;
+  filter: brightness(1.1);
   pointer-events: none;
 }
 
 .scanline {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: rgba(0, 255, 65, 0.2);
-  z-index: 100;
+  position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+  background: rgba(0, 255, 65, 0.1);
+  z-index: 3;
   pointer-events: none;
-  animation: scan 6s linear infinite;
+  animation: scan 8s linear infinite;
+  opacity: 0.5;
 }
-@keyframes scan {
-  0% { top: 0; }
-  100% { top: 100%; }
-}
+@keyframes scan { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
 
-/* --- ГЛИТЧ-ЭФФЕКТ --- */
+/* ГЛИТЧ-ЭФФЕКТ */
 .glitch {
   position: relative;
   display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 .glitch::before, .glitch::after {
   content: attr(data-text);
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   background: transparent;
 }
 .glitch::before {
@@ -114,7 +110,7 @@ body {
 .glitch::after {
   left: -2px;
   text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-  animation: glitch-anim2 1s infinite linear alternate-reverse;
+  animation: glitch-anim2 1.5s infinite linear alternate-reverse;
 }
 @keyframes glitch-anim {
   0% { clip: rect(31px, 9999px, 94px, 0); }
@@ -133,293 +129,220 @@ body {
   100% { clip: rect(5px, 9999px, 15px, 0); }
 }
 
-/* --- BOOT FRAME (АВТОРИЗАЦИЯ) --- */
+/* Блок загрузки / авторизации */
 .boot-frame {
-  border: 2px solid var(--neon);
-  background: var(--panel-bg);
-  padding: 30px;
-  border-radius: 12px;
-  width: min(900px, 95vw);
-  box-shadow: 0 0 60px var(--neon-glow), inset 0 0 20px rgba(0,255,65,0.2);
   position: relative;
   z-index: 10;
+  width: min(850px, 92vw);
+  background: var(--panel-bg);
+  padding: clamp(20px, 5vw, 40px);
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--panel-shadow), 0 0 50px rgba(0, 255, 65, 0.1);
   backdrop-filter: blur(12px);
-  border-image: linear-gradient(45deg, var(--neon), #008f11) 1;
+  overflow: hidden;
+}
+
+/* Декоративные уголки для панелей */
+.boot-frame::after, .terminal-main::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 40px; height: 40px;
+  border-top: 2px solid var(--neon);
+  border-right: 2px solid var(--neon);
+  pointer-events: none;
 }
 
 .logs {
-  max-height: 280px;
+  max-height: 300px;
   overflow-y: auto;
   padding-right: 10px;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   line-height: 1.6;
 }
-.logs p { margin: 4px 0; }
 .logs span { 
   color: var(--neon); 
-  font-weight: bold; 
-  text-shadow: 0 0 8px var(--neon-glow); 
+  text-shadow: 0 0 5px var(--neon-glow);
 }
 
-.auth-stage {
-  padding-top: 15px;
-  border-top: 2px dashed rgba(0, 255, 65, 0.2);
-  margin-top: 20px;
+.auth-stage { 
+  padding-top: 20px; 
+  border-top: 1px solid rgba(0, 255, 65, 0.2); 
+  margin-top: 20px; 
 }
-
-.prompt {
-  font-weight: bold;
-  color: #c9ffd6;
-  text-shadow: 0 0 10px var(--neon-glow);
-}
-
-.muted { color: var(--text-dim); }
 
 .warning { 
   color: var(--warning-red); 
   font-weight: bold; 
-  text-shadow: 0 0 10px var(--red-glow);
-  text-transform: uppercase;
+  text-shadow: 0 0 10px var(--red-glow); 
+  padding: 10px;
+  border: 1px dashed var(--warning-red);
+  margin: 15px 0;
+  display: inline-block;
 }
 
-.highlight { color: #fff; text-shadow: 0 0 10px #fff; }
+.blink { animation: blink 1s step-end infinite; border-right: 8px solid var(--neon); padding-right: 4px; }
+@keyframes blink { 50% { border-color: transparent; } }
 
-.blink { animation: blink 0.8s infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-
-/* --- КНОПКИ --- */
+/* Кнопки */
 .mobile-keys {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
+  display: flex; gap: 12px; margin-top: 25px;
 }
 .mobile-keys button {
-  flex: 1;
   background: rgba(0, 255, 65, 0.05);
-  border: 2px solid var(--neon);
+  border: 1px solid var(--neon);
   color: var(--neon);
   padding: 14px;
+  font-family: inherit;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1;
+  letter-spacing: 1px;
 }
 .mobile-keys button:hover {
   background: var(--neon);
   color: #000;
-  box-shadow: 0 0 30px var(--neon);
+  box-shadow: 0 0 20px var(--neon);
 }
 
-/* --- ГЛАВНЫЙ ИНТЕРФЕЙС (ПОСЛЕ Y/N) --- */
+/* Главный интерфейс */
 .interface-grid {
   display: flex;
   flex-direction: column;
-  width: min(1300px, 98vw);
-  height: min(92vh, 800px);
+  width: min(1200px, 96vw);
+  height: min(90dvh, 750px);
   gap: 15px;
   z-index: 10;
   position: relative;
-  /* Дублируем сетку сюда, чтобы при наложении панелей она не исчезала */
-  background-image:
-    linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
+/* Шапка мониторинга */
 .system-header {
   background: var(--panel-bg);
-  border: 2px solid var(--accent-blue);
-  padding: 15px 25px;
+  border: 1px solid var(--accent-blue);
+  padding: 12px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 10px;
-  box-shadow: 0 0 25px var(--blue-glow);
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(0, 162, 255, 0.15);
   backdrop-filter: blur(10px);
 }
 
-.status-node {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #fff;
-  font-weight: bold;
-}
-
+.status-node { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
 .pulse-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--neon);
-  box-shadow: 0 0 15px var(--neon-glow);
+  width: 8px; height: 8px; border-radius: 50%; background: var(--neon);
+  box-shadow: 0 0 10px var(--neon-glow);
   animation: pulse 1s infinite alternate;
 }
-@keyframes pulse {
-  0% { transform: scale(0.85); opacity: 0.5; }
-  100% { transform: scale(1.1); opacity: 1; }
-}
+@keyframes pulse { 0% { opacity: 0.4; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
 
-.mini-bar {
-  width: 200px;
-  height: 14px;
-  background: #000;
-  border: 1px solid var(--card-border);
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
+.mini-bar { 
+  width: 140px; height: 8px; 
+  background: rgba(0,0,0,0.5); 
+  border: 1px solid rgba(0,255,65,0.2); 
+  border-radius: 10px; overflow: hidden;
 }
-.mini-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--neon);
-  box-shadow: 0 0 15px var(--neon-glow);
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
+.mini-bar-fill { height: 100%; width: 45%; background: var(--neon); box-shadow: 0 0 10px var(--neon-glow); }
 
+/* Основной контент */
 .terminal-main {
   flex-grow: 1;
   background: var(--panel-bg);
-  border: 1px solid rgba(0, 255, 65, 0.3);
-  border-top: 6px solid var(--neon);
-  padding: 25px;
-  overflow-y: auto;
-  border-radius: 12px;
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
-}
-
-.block {
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 255, 65, 0.2);
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  transition: transform 0.2s;
-}
-.block:hover {
-  border-color: rgba(0, 255, 65, 0.5);
-}
-
-.block h2 {
-  margin: 0;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1rem;
-  cursor: pointer;
-  background: rgba(0, 255, 65, 0.07);
-  border-bottom: 1px solid rgba(0, 255, 65, 0.1);
-}
-
-.inner-content {
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--neon);
   padding: 20px;
-  color: #eafff2;
+  overflow-y: auto;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  position: relative;
 }
 
-.block.collapsed .inner-content { display: none; }
-
-.history-log p {
-  border-left: 3px solid var(--accent-blue);
-  padding-left: 15px;
-  margin: 10px 0;
-  color: var(--text-dim);
+.block { 
+  margin-bottom: 15px; 
+  border-radius: 6px; 
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(0, 255, 65, 0.1);
+  overflow: hidden;
 }
-.history-log span {
-  color: var(--accent-blue);
-  font-weight: bold;
+.block h2 {
+  margin: 0; padding: 12px 15px;
+  font-size: 0.9rem; color: var(--neon);
+  background: rgba(0, 255, 65, 0.05);
+  cursor: pointer;
+  display: flex; justify-content: space-between;
+}
+.block h2:hover { background: rgba(0, 255, 65, 0.1); }
+
+.inner-content { padding: 15px; font-size: 0.95rem; line-height: 1.5; }
+
+.history-log p { 
+  border-left: 2px solid var(--accent-blue); 
+  padding: 5px 15px; 
+  margin: 10px 0; 
+  background: rgba(0, 162, 255, 0.03);
 }
 
-.brand { font-weight: bold; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-.italic { font-style: italic; color: var(--neon); }
-.state { font-weight: bold; color: var(--neon); text-shadow: 0 0 8px var(--neon-glow); }
-
-/* --- ТЕХНИЧЕСКИЕ ИНДИКАТОРЫ --- */
-.stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-.stat-label { color: var(--text-dim); }
-.stat-value { color: var(--neon); font-weight: bold; }
-
-/* =========================================
-   МОБИЛЬНАЯ ОПТИМИЗАЦИЯ (MAX-WIDTH 900PX)
-   ========================================= */
-@media (max-width: 900px) {
+/* АДАПТИВНОСТЬ */
+@media (max-width: 768px) {
   :root {
-    --panel-bg: rgba(8, 12, 26, 0.7); 
+    --panel-bg: rgba(6, 9, 18, 0.92);
   }
 
   body {
-    background-size: 25px 25px; /* Уменьшаем клетку для мобил */
+    background-size: 30px 30px;
   }
 
-  /* Чистим рамку авторизации для мобилок */
   .boot-frame {
-    padding: 15px;
+    padding: 18px;
     width: 94vw;
-    border-width: 1px;
-    border-radius: 6px;
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-    backdrop-filter: blur(8px);
-  }
-  
-  /* Убираем тяжелые декоративные элементы на мобилках */
-  .boot-frame::before { display: none; }
-
-  .logs {
-    font-size: 11px;
-    max-height: 200px;
-    line-height: 1.4;
+    border-radius: 8px;
   }
 
   .mobile-keys {
-    flex-direction: column;
     gap: 8px;
   }
+  
   .mobile-keys button {
-    padding: 12px;
+    padding: 12px 5px;
     font-size: 13px;
-    letter-spacing: 1px;
-  }
-
-  .interface-grid {
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    padding: 5px;
-    gap: 10px;
-    background-size: 25px 25px;
   }
 
   .system-header {
-    padding: 10px;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     align-items: flex-start;
+    padding: 15px;
   }
 
-  .mini-bar { width: 100%; height: 10px; }
+  .mini-bar { width: 100%; }
+
+  .interface-grid {
+    width: 100%;
+    height: 100dvh;
+    padding: 8px;
+    gap: 10px;
+  }
 
   .terminal-main {
-    padding: 12px;
-    border-top-width: 3px;
+    padding: 15px;
+    border-radius: 4px;
+    border-left-width: 3px;
   }
 
-  .block h2 {
-    padding: 10px;
-    font-size: 0.85rem;
-  }
-
-  .inner-content {
-    padding: 12px;
-    font-size: 0.85rem;
-  }
-
-  .stat-row { font-size: 11px; }
+  .block h2 { font-size: 0.85rem; }
+  .inner-content { font-size: 0.85rem; }
 }
 
-/* Фикс для совсем маленьких экранов */
-@media (max-width: 400px) {
-  .logs { max-height: 150px; }
-  .system-header { font-size: 0.75rem; }
+/* Плавное появление интерфейса */
+.interface-grid, .boot-frame {
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
