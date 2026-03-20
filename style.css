@@ -2,8 +2,8 @@
   --neon: #00ff41;
   --neon-glow: rgba(0, 255, 65, 0.6);
   --bg-dark: #0a0a0f;
-  /* Сделали фон панелей прозрачнее (0.8), чтобы матрица «просвечивала» */
-  --panel-bg: rgba(8, 12, 26, 0.8); 
+  /* Уменьшил альфа-канал, чтобы фон (матрица + сетка) просвечивал */
+  --panel-bg: rgba(8, 12, 26, 0.85); 
   --accent-blue: #00a2ff;
   --blue-glow: rgba(0, 170, 255, 0.5);
   --warning-red: #ff3e3e;
@@ -35,6 +35,7 @@
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Кастомный скроллбар (Firefox) */
   scrollbar-width: thin;
   scrollbar-color: var(--neon) rgba(8, 12, 26, 0.6);
 }
@@ -45,7 +46,7 @@ html, body {
   background: var(--bg-dark);
   font-family: "Consolas", "Monaco", monospace;
   color: #eafff2;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 body {
@@ -53,9 +54,10 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
+  /* Твоя крутая клеточка из авторизации — теперь на основном фоне */
   background-image:
-    linear-gradient(rgba(0,255,65,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,65,.05) 1px, transparent 1px);
+    linear-gradient(rgba(0, 255, 65, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.08) 1px, transparent 1px);
   background-size: 40px 40px;
   text-shadow: 0 0 5px rgba(0, 255, 65, 0.2); 
 }
@@ -66,8 +68,9 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 0;
-  opacity: 0.6;
+  opacity: 0.5; /* Оставил запас, чтобы не слепило */
   filter: brightness(1.15) contrast(1.15);
+  pointer-events: none;
 }
 
 .scanline {
@@ -79,7 +82,7 @@ body {
 }
 @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
-/* ГЛИТЧ-ЭФФЕКТ ДЛЯ НАДПИСЕЙ */
+/* --- ЭФФЕКТ ГЛИТЧА --- */
 .glitch {
   position: relative;
   display: inline-block;
@@ -129,7 +132,7 @@ body {
   position: relative;
   z-index: 5;
   overflow: hidden;
-  backdrop-filter: blur(4px); /* Чтобы текст читался поверх матрицы */
+  backdrop-filter: blur(4px); /* Чтобы сетка и матрица не мешали читать текст */
 }
 .boot-frame::before {
   content: "";
@@ -143,7 +146,6 @@ body {
   mask-composite: exclude;
   pointer-events: none;
 }
-
 .logs {
   max-height: 270px;
   overflow: auto;
@@ -157,13 +159,13 @@ body {
 .logs span { 
   color: var(--neon); 
   font-weight: bold; 
-  text-shadow: 0 0 8px var(--neon-glow);
+  text-shadow: 0 0 8px var(--neon-glow); 
 }
 
 .auth-stage { padding-top: 6px; border-top: 2px dashed rgba(0,255,65,.3); margin-top: 14px; }
 
 .prompt { font-weight: bold; color: #c9ffd6; text-shadow: 0 0 8px var(--neon-glow); }
-.muted { color: var(--text-dim); text-shadow: none; }
+.muted { color: var(--text-dim); text-shadow: none; } 
 
 .warning { 
   color: var(--warning-red); 
@@ -191,7 +193,7 @@ body {
   box-shadow: 0 0 10px var(--neon-glow);
   text-shadow: 0 0 5px var(--neon-glow);
   transition: 0.25s ease;
-  flex: 1;
+  flex: 1; 
 }
 .mobile-keys button:hover {
   background: var(--neon);
@@ -236,20 +238,20 @@ body {
 .mini-bar { width: 180px; height: 12px; background: #000; border:1px solid rgba(0,255,65,.4); position: relative; overflow:hidden; border-radius: 6px; }
 .mini-bar-fill { height:100%; width:0%; background: var(--neon); transition: width .4s ease; box-shadow: 0 0 12px var(--neon-glow); }
 
-/* Основной контент */
+/* Основной контент: консоль-терминал */
 .terminal-main {
   flex-grow: 1;
   background: var(--panel-bg);
   border: 1px solid rgba(0,255,65,.4);
   border-top: 5px solid var(--neon);
   padding: 18px;
-  overflow-y: auto;
+  overflow-y: auto; 
   -webkit-overflow-scrolling: touch;
   box-shadow: 0 0 28px rgba(0,0,0,.8);
   border-radius: 8px;
   backdrop-filter: blur(3px);
 }
-.block { margin-bottom: 14px; border: 1px solid rgba(0,255,65,.25); background: rgba(0,255,65,.03); transition: all .25s ease; border-radius: 6px; }
+.block { margin-bottom: 14px; border: 1px solid rgba(0,255,65,.25); background: rgba(0,255,65,0.03); transition: all .25s ease; border-radius: 6px; }
 .block h2 {
   margin: 0; padding: 12px 14px;
   display: flex; justify-content: space-between; align-items: center;
@@ -273,7 +275,6 @@ body {
 .italic { font-style: italic; }
 .state { font-weight: bold; text-shadow: 0 0 8px var(--neon-glow); }
 
-
 /* =========================================
    АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
    ========================================= */
@@ -282,57 +283,55 @@ body {
     --panel-bg: rgba(8, 12, 26, 0.7); /* На мобилках еще прозрачнее */
   }
 
+  body { background-size: 25px 25px; } /* Мелкая сетка для мобилок */
+
   .boot-frame {
-    padding: 15px;
+    padding: 18px;
     width: 96vw;
     box-shadow: 0 0 30px var(--neon-glow);
   }
   
   .mobile-keys { 
     flex-direction: column; 
-    gap: 8px; 
-  }
-  .mobile-keys button {
-    padding: 10px;
-    font-size: 14px;
+    gap: 10px; 
   }
   
   .system-header { 
     flex-wrap: wrap; 
-    gap: 8px; 
-    padding: 10px;
-    justify-content: center;
+    gap: 10px; 
+    padding: 10px 12px;
+    justify-content: center; 
   }
   
-  .status-node { font-size: 0.8rem; }
-  .mini-bar { width: 100px; }
+  .status-node { font-size: 0.85rem; }
+  .mini-bar { width: 100px; } 
   
   .interface-grid { 
     width: 100vw; 
-    height: 100dvh; /* Используем dvh, чтобы не перекрывалось браузером */
+    height: 100dvh; 
     max-height: 100dvh; 
     padding: 4px;
-    gap: 6px;
+    gap: 8px;
     border-radius: 0; 
   }
   
   .terminal-main {
-    padding: 10px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 6px;
   }
   
   .block h2 {
-    padding: 8px 10px;
-    font-size: 0.8rem;
+    padding: 10px 12px;
+    font-size: 0.85rem;
   }
   
   .inner-content {
-    padding: 10px;
-    font-size: 0.8rem;
+    padding: 12px;
+    font-size: 0.85rem;
   }
   
   .logs {
-    font-size: 12px;
-    max-height: 180px;
+    font-size: 12px; 
+    max-height: 200px;
   }
 }
