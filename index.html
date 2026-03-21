@@ -18,7 +18,6 @@
       --tablet-border: #12141c;
     }
 
-    /* Скроллбар Webkit */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.6); border-left: 1px solid rgba(0, 255, 65, 0.1); }
     ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 4px; box-shadow: 0 0 10px var(--neon-glow); }
@@ -53,7 +52,6 @@
       background-size: 100% 100%, 40px 40px, 40px 40px;
     }
 
-    /* АППАРАТНАЯ РАМКА ПЛАНШЕТА */
     .tablet-frame {
       position: relative;
       width: min(1300px, 96vw);
@@ -71,7 +69,6 @@
       z-index: 10;
     }
 
-    /* Усиленные углы корпуса */
     .tablet-frame::before, .tablet-frame::after {
       content: ''; position: absolute; width: 40px; height: 40px;
       border: 2px solid #333; pointer-events: none; border-radius: 8px;
@@ -79,7 +76,6 @@
     .tablet-frame::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
     .tablet-frame::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
 
-    /* Датчики и камера наверху планшета */
     .tablet-hardware-top {
       position: absolute;
       top: 6px; left: 50%;
@@ -95,7 +91,6 @@
     .camera { width: 10px; height: 10px; border-radius: 50%; background: #000; border: 1px solid #444; box-shadow: inset 0 0 4px #0055ff; }
     .sensor { width: 6px; height: 6px; border-radius: 50%; background: #222; }
 
-    /* ЭКРАН ПЛАНШЕТА */
     .tablet-screen {
       flex-grow: 1;
       background: var(--bg-dark);
@@ -110,7 +105,6 @@
       box-shadow: inset 0 0 50px rgba(0, 255, 65, 0.05);
     }
 
-    /* Матрица фон */
     #matrix {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       z-index: 1; opacity: 0.6; pointer-events: none;
@@ -123,12 +117,10 @@
     }
     @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
 
-    /* Эффект свечения экрана на корпус */
     .screen-glow {
       position: absolute; inset: 0; box-shadow: inset 0 0 80px rgba(0,255,65,0.1); pointer-events: none; z-index: 5;
     }
 
-    /* === BOOT SCREEN === */
     .boot-frame {
       border: 1px solid var(--neon);
       background: rgba(5, 8, 15, 0.9);
@@ -147,12 +139,10 @@
     .mobile-keys button { background: rgba(0, 255, 65, 0.05); border: 1px solid var(--neon); color: var(--neon); padding: 12px 24px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: all 0.2s; flex: 1; letter-spacing: 2px; }
     .mobile-keys button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
 
-    /* === ГЛАВНЫЙ ИНТЕРФЕЙС === */
     .interface-grid {
       display: flex; flex-direction: column; width: 100%; height: 100%; gap: 12px; z-index: 10; position: relative; padding: 16px;
     }
 
-    /* Шапка мониторинга */
     .system-header {
       background: var(--panel-bg); border: 1px solid var(--accent-blue); padding: 12px 20px; display: flex; gap: 15px; justify-content: space-between; align-items: center; border-radius: 6px; box-shadow: 0 4px 20px rgba(0, 162, 255, 0.1); border-left: 4px solid var(--accent-blue); backdrop-filter: blur(5px);
     }
@@ -162,7 +152,6 @@
     .mini-bar { width: 150px; height: 8px; background: rgba(0,0,0,0.6); border:1px solid rgba(0,255,65,.3); position: relative; overflow:hidden; border-radius: 4px; }
     .mini-bar-fill { height:100%; width:0%; background: var(--neon); transition: width .4s ease; box-shadow: 0 0 10px var(--neon-glow); }
 
-    /* Терминал */
     .terminal-main {
       flex-grow: 1; background: var(--panel-bg); border: 1px solid rgba(0,255,65,.2); border-top: 3px solid var(--neon); padding: 16px; overflow-y: auto; border-radius: 6px; backdrop-filter: blur(5px);
     }
@@ -172,11 +161,9 @@
     .inner-content { padding: 16px; color: #eafff2; line-height: 1.6; }
     .block.collapsed .inner-content { display: none; }
 
-    /* Стили для логов истории (MISSION_LOGS) */
     .history-log p { border-left: 3px solid var(--accent-blue); padding-left: 14px; margin: 10px 0; color: var(--text-dim); }
     .history-log span { color: var(--accent-blue); font-weight: bold; text-shadow: 0 0 8px var(--blue-glow); }
 
-    /* Файловая система */
     .file-system-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,65,.3); padding-bottom: 8px; margin-bottom: 10px; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
     .fs-col-name { flex: 2; }
     .fs-col-size, .fs-col-perms { flex: 1; text-align: right; }
@@ -190,7 +177,6 @@
     .file-row { display: flex; justify-content: space-between; padding: 8px; font-size: 0.85rem; border-bottom: 1px solid rgba(0,255,65,.05); transition: background 0.2s; }
     .file-row:hover { background: rgba(0,255,65,.08); }
     
-    /* Исправленный CSS для ссылок файлов */
     .file-name { flex: 2; display: flex; align-items: center; gap: 8px; }
     .file-name a { color: var(--neon); text-decoration: none; }
     .file-name a:hover { text-shadow: 0 0 10px var(--neon-glow); text-decoration: underline; }
@@ -311,24 +297,21 @@
       </section>
 
     </div> </div> <script>
-    /* =========================================
-       1) КОНФИГУРАЦИЯ ФАЙЛОВОЙ СИСТЕМЫ
-       ========================================= */
     const repoData = [
       {
         type: 'folder',
         name: 'PROJECTS_2026',
         contents: [
-          { type: 'file', name: 'Godot_EMDEBBED_src.zip', size: '142 MB', perms: 'rwx-r--', url: '#' },
-          { type: 'file', name: 'Rust_C#_Plugins.dll', size: '840 KB', perms: 'r--r--r', url: '#' },
-          { type: 'file', name: 'Music_Web_Platform.py', size: '2.1 MB', perms: 'rwx-r--', url: '#' }
+          { type: 'file', name: 'Rust Plugins', size: 'N/AN', perms: 'rwx-r--', url: 'https://github.com/SadDrop1220/Rust-Plugins' },
+          { type: 'file', name: 'Python bot', size: 'N/AN', perms: 'r--r--r', url: 'https://github.com/SadDrop1220/Python-scripts' },
+          { type: 'file', name: 'This site', size: 'N/AN', perms: 'rwx-r--', url: '#' }
         ]
       },
       {
         type: 'folder',
         name: 'ARCHIVE_DECRYPTED',
         contents: [
-          { type: 'file', name: 'client_base.sql', size: '45 MB', perms: 'r--------', url: '#' },
+          { type: 'file', name: 'my fun game', size: '45 MB', perms: 'r--------', url: 'https://github.com/SadDrop1220/Fun-fnaf-game-GameMaker-alpja--0.0.0.1-D' },
           { type: 'file', name: 'RedOS_admin_config.sh', size: '12 KB', perms: 'rwx------', url: '#' },
           { type: 'file', name: 'Varwin_VR_logic.py', size: '48 KB', perms: 'r--r--r', url: '#' }
         ]
@@ -358,7 +341,6 @@
           folderWrapper.appendChild(contentsDiv);
           container.appendChild(folderWrapper);
         } else {
-          // ИСПРАВЛЕННЫЙ ВЫВОД ФАЙЛА (Иконка вынесена из <a>)
           const fileRow = document.createElement('div');
           fileRow.className = 'file-row';
           fileRow.innerHTML = `
@@ -377,9 +359,6 @@
     const fsContainer = document.getElementById('fs-container');
     renderFileSystem(repoData, fsContainer);
 
-    /* =========================================
-       2) ЛОГИКА ЗАГРУЗКИ И ИНТЕРФЕЙСА
-       ========================================= */
     const bootData = [
       "[ OK ] BIOS Checksum valid",
       "[ OK ] Initializing Secure Kernel...",
@@ -448,9 +427,6 @@
       }, 1500);
     }
 
-    /* =========================================
-       3) МАТРИЦА НА ФОНЕ
-       ========================================= */
     function startMatrix() {
       const canvas = document.getElementById('matrix');
       const ctx = canvas.getContext('2d');
